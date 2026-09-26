@@ -7,9 +7,6 @@
     "start": "node --env-file-if-exists=.env server.js",
     "seo": "node scripts/generate-seo.mjs",
     "check": "node --check server.js && node --check js/app.js && node --check js/store.js && node --check js/views.js && node --check js/data.js && node --check js/ui.js",
-    "test": "node tests/smoke.mjs"
-  },
-  "dependencies": {
-    "nodemailer": "^10.0.10"
+    "test": "node tests/smoke.mjs && node tests/supabase-storage.mjs"
   }
 }

@@ -2,7 +2,7 @@ services:
   - type: web
     name: notastore
     runtime: node
-    plan: starter
+    plan: free
     region: frankfurt
     buildCommand: npm ci && npm run seo
     startCommand: npm start
@@ -15,25 +15,17 @@ services:
         value: "22"
       - key: PUBLIC_BASE_URL
         value: https://notastore.shop
-      - key: NOTASTORE_DB_FILE
-        value: /var/data/notastore.json
       - key: NOTASTORE_ENABLE_SCHEDULED_CREDITS
         value: "false"
-      - key: SMTP_HOST
-        value: authsmtp.securemail.pro
-      - key: SMTP_PORT
-        value: "465"
-      - key: SMTP_SECURE
-        value: "true"
-      - key: SMTP_USER
-        value: accrediti@notastore.shop
-      - key: SMTP_FROM
-        value: NotAStore Accrediti <accrediti@notastore.shop>
-      - key: SMTP_PASS
+      - key: SUPABASE_URL
         sync: false
+      - key: SUPABASE_SERVICE_ROLE_KEY
+        sync: false
+      - key: RESEND_API_KEY
+        sync: false
+      - key: EMAIL_FROM
+        value: NotAStore Accrediti <accrediti@notastore.shop>
+      - key: NOTASTORE_ADMIN_EMAIL
+        value: info@notastore.shop
       - key: NOTASTORE_SOCIAL_CODE
         sync: false
-    disk:
-      name: notastore-data
-      mountPath: /var/data
-      sizeGB: 1

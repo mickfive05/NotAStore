@@ -4,13 +4,16 @@ import { createReadStream } from 'node:fs';
 import { extname, join, normalize, resolve } from 'node:path';
 import { randomBytes, randomUUID, scryptSync, timingSafeEqual, createHash } from 'node:crypto';
 import { fileURLToPath } from 'node:url';
-import nodemailer from 'nodemailer';
 import { PRODUCTS, variantPrice, variantTitle, variantImage } from './js/data.js';
 
 const ROOT = fileURLToPath(new URL('.', import.meta.url));
 const DATA_DIR = join(ROOT, 'data');
 const DB_FILE = process.env.NOTASTORE_DB_FILE || join(DATA_DIR, 'notastore.json');
 const PORT = Number(process.env.PORT || 8000);
+const SUPABASE_URL = String(process.env.SUPABASE_URL || '').replace(/\/$/, '');
+const SUPABASE_SERVICE_ROLE_KEY = String(process.env.SUPABASE_SERVICE_ROLE_KEY || '');
+const USE_SUPABASE = Boolean(SUPABASE_URL && SUPABASE_SERVICE_ROLE_KEY);
+const STATE_ID = 'primary';
 const LEVELS = [
   { level: 1, name: 'Postepay', threshold: 0, min: 100, max: 250, bonus: 0, tone: 'red' },
   { level: 2, name: 'Visa Classic', threshold: 2500, min: 250, max: 1000, bonus: 250, tone: 'blue' },
@@ -51,9 +54,21 @@ function sessionCookie(value, maxAge = 2592000) {
 }
 
 async function loadDb() {
-  await mkdir(DATA_DIR, { recursive: true });
-  try { db = JSON.parse(await readFile(DB_FILE, 'utf8')); }
-  catch { await persist(); }
+  if (isProduction && !USE_SUPABASE) throw new Error('In produzione devi configurare SUPABASE_URL e SUPABASE_SERVICE_ROLE_KEY.');
+  if (USE_SUPABASE) {
+    const response = await fetch(`${SUPABASE_URL}/rest/v1/notastore_state?id=eq.${STATE_ID}&select=state`, { headers: supabaseHeaders() });
+    if (!response.ok) throw new Error(`Supabase non disponibile (${response.status}): verifica tabella, URL e service role key.`);
+    const rows = await response.json();
+    if (rows[0]?.state) db = rows[0].state;
+    else {
+      const created = await fetch(`${SUPABASE_URL}/rest/v1/notastore_state`, { method: 'POST', headers: supabaseHeaders({ Prefer: 'return=minimal' }), body: JSON.stringify({ id: STATE_ID, state: db, updated_at: new Date().toISOString() }) });
+      if (!created.ok) throw new Error(`Impossibile inizializzare Supabase (${created.status}).`);
+    }
+  } else {
+    await mkdir(DATA_DIR, { recursive: true });
+    try { db = JSON.parse(await readFile(DB_FILE, 'utf8')); }
+    catch { await persist(); }
+  }
   let changed = false;
   for (const key of ['users', 'sessions', 'rewards', 'outbox', 'emailVerifications', 'referrals']) if (!Array.isArray(db[key])) { db[key] = []; changed = true; }
   for (const user of db.users) {
@@ -68,11 +83,20 @@ async function loadDb() {
   if (changed) await persist();
 }
 
+function supabaseHeaders(extra = {}) {
+  return { apikey: SUPABASE_SERVICE_ROLE_KEY, Authorization: `Bearer ${SUPABASE_SERVICE_ROLE_KEY}`, 'Content-Type': 'application/json', ...extra };
+}
+
 function persist() {
   writeQueue = writeQueue.then(async () => {
-    const tmp = `${DB_FILE}.tmp`;
-    await writeFile(tmp, JSON.stringify(db, null, 2), 'utf8');
-    await rename(tmp, DB_FILE);
+    if (USE_SUPABASE) {
+      const response = await fetch(`${SUPABASE_URL}/rest/v1/notastore_state?id=eq.${STATE_ID}`, { method: 'PATCH', headers: supabaseHeaders({ Prefer: 'return=minimal' }), body: JSON.stringify({ state: db, updated_at: new Date().toISOString() }) });
+      if (!response.ok) throw new Error(`Salvataggio Supabase non riuscito (${response.status}).`);
+    } else {
+      const tmp = `${DB_FILE}.tmp`;
+      await writeFile(tmp, JSON.stringify(db, null, 2), 'utf8');
+      await rename(tmp, DB_FILE);
+    }
   });
   return writeQueue;
 }
@@ -158,27 +182,21 @@ function transaction(user, type, amount, meta = {}) {
   user.transactions.unshift({ id: `TX-${randomUUID()}`, timestamp: new Date().toISOString(), type, amount, balanceBefore: before, balanceAfter: user.wallet, ...meta });
 }
 
-let mailTransport;
-function smtpTransport() {
-  if (mailTransport) return mailTransport;
-  if (!process.env.SMTP_HOST || !process.env.SMTP_USER || !process.env.SMTP_PASS || !process.env.SMTP_FROM) return null;
-  mailTransport = nodemailer.createTransport({
-    host: process.env.SMTP_HOST,
-    port: Number(process.env.SMTP_PORT || 587),
-    secure: String(process.env.SMTP_SECURE || '').toLowerCase() === 'true',
-    auth: { user: process.env.SMTP_USER, pass: process.env.SMTP_PASS },
-  });
-  return mailTransport;
-}
-
 async function deliverMail(user, mail, content) {
   if (user.isDemo || process.env.NOTASTORE_TEST_OUTBOX === 'true') {
     db.outbox.unshift({ ...mail, delivery: 'internal' });
     return 'internal';
   }
-  const transport = smtpTransport();
-  if (!transport) throw new Error('Invio email non configurato. Imposta SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS e SMTP_FROM.');
-  await transport.sendMail({ from: process.env.SMTP_FROM, to: user.email, subject: mail.subject, ...content, disableFileAccess: true, disableUrlAccess: true });
+  if (!process.env.RESEND_API_KEY || !process.env.EMAIL_FROM) throw new Error('Invio email non configurato. Imposta RESEND_API_KEY ed EMAIL_FROM.');
+  const response = await fetch('https://api.resend.com/emails', {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${process.env.RESEND_API_KEY}`, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ from: process.env.EMAIL_FROM, to: [user.email], subject: mail.subject, text: content.text, html: content.html }),
+  });
+  if (!response.ok) {
+    const details = await response.text();
+    throw new Error(`Invio Resend non riuscito (${response.status}): ${details.slice(0, 240)}`);
+  }
   db.outbox.unshift({ ...mail, delivery: 'sent' });
   return 'email';
 }
@@ -570,7 +588,9 @@ async function verifyEmail(res, token) {
   if (!verification || !user || verification.usedAt || new Date(verification.expiresAt).getTime() <= Date.now()) {
     res.writeHead(302, { ...securityHeaders(), Location: '/#/account/ricompense?verified=invalid' }); return res.end();
   }
-  verification.usedAt = new Date().toISOString(); user.emailVerifiedAt = verification.usedAt; await persist();
+  verification.usedAt = new Date().toISOString(); user.emailVerifiedAt = verification.usedAt;
+  if (String(user.email).toLowerCase() === String(process.env.NOTASTORE_ADMIN_EMAIL || '').trim().toLowerCase()) user.role = 'admin';
+  await persist();
   res.writeHead(302, { ...securityHeaders(), Location: '/#/account/ricompense?verified=success' }); return res.end();
 }
 
@@ -613,7 +633,7 @@ if (process.env.NOTASTORE_ENABLE_SCHEDULED_CREDITS === 'true') scheduleCredits()
 const server = http.createServer(async (req, res) => {
   try {
     const url = new URL(req.url, `http://${req.headers.host || 'localhost'}`);
-    if (req.method === 'GET' && url.pathname === '/healthz') return json(res, 200, { ok: true, service: 'notastore' });
+    if (req.method === 'GET' && url.pathname === '/healthz') return json(res, 200, { ok: true, service: 'notastore', storage: USE_SUPABASE ? 'supabase' : 'local', email: process.env.RESEND_API_KEY ? 'resend' : 'not-configured' });
     if (url.pathname.startsWith('/api/')) return await api(req, res, url);
     if (req.method === 'GET' && url.pathname.startsWith('/claim/')) return await claim(res, url.pathname.split('/').pop());
     if (req.method === 'GET' && url.pathname.startsWith('/verify/')) return await verifyEmail(res, url.pathname.split('/').pop());

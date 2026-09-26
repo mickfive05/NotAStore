@@ -1,46 +1,81 @@
-# Pubblicazione di NotAStore su Render
+# Pubblicazione gratuita di NotAStore
 
-## 1. Prima di iniziare
+Architettura utilizzata:
 
-1. Crea in Register.it la casella `accrediti@notastore.shop` e scegli una password forte e unica.
-2. Verifica dalla webmail che la casella possa inviare e ricevere.
-3. Mantieni `info@notastore.shop` come recapito pubblico e privacy.
-4. Carica il progetto in un repository Git privato senza includere `.env`, `data/notastore.json` o file di log.
+- Render Free: server Node e file del sito;
+- Supabase Free: database persistente;
+- Resend Free: email di verifica e accredito tramite API HTTPS;
+- Cloudflare Free: DNS, HTTPS e dominio.
 
-## 2. Creazione su Render
+## 1. Supabase
 
-1. In Render scegli **New > Blueprint** e collega il repository.
-2. Render leggerà `render.yaml` e creerà il servizio `notastore` nella regione di Francoforte.
-3. Quando richiesto, inserisci `SMTP_PASS`: è la password della casella `accrediti@notastore.shop`.
-4. Inserisci `NOTASTORE_SOCIAL_CODE`: è il codice privato della campagna che pubblicherai nella bio o nei contenuti social.
-5. Non salvare mai password o codici campagna nel repository.
-6. Attendi che `/healthz` risponda con `{"ok":true,"service":"notastore"}`.
+1. Crea un account su `https://supabase.com`.
+2. Crea un nuovo progetto sul piano Free e scegli una regione europea.
+3. Apri **SQL Editor > New query**.
+4. Incolla ed esegui tutto il contenuto di `supabase-setup.sql`.
+5. Apri **Project Settings > API**.
+6. Copia il **Project URL**: sarà `SUPABASE_URL`.
+7. Copia la chiave segreta **service_role**: sarà `SUPABASE_SERVICE_ROLE_KEY`.
 
-Il piano indicato è `starter` perché il database JSON richiede un disco persistente. Senza disco persistente account, sessioni, saldi e ordini possono andare persi durante deploy o riavvii.
+La service role key deve essere salvata esclusivamente su Render. Non inserirla mai nel browser, nel repository o in un messaggio pubblico.
 
-## 3. Dominio
+## 2. Resend
 
-1. Su Render aggiungi `notastore.shop` come dominio personalizzato.
-2. In Cloudflare crea il record DNS richiesto da Render.
-3. Aggiungi anche `www.notastore.shop` e reindirizzalo permanentemente a `https://notastore.shop`.
-4. In Cloudflare usa SSL/TLS **Full (strict)** e abilita **Always Use HTTPS**.
-5. Non modificare o eliminare i record MX, SPF e DKIM forniti da Register.it.
+1. Crea un account su `https://resend.com`.
+2. Apri **Domains > Add Domain** e aggiungi `notastore.shop`.
+3. Copia in Cloudflare tutti i record DNS indicati da Resend, senza eliminare i record MX di Register.it.
+4. Attendi che il dominio risulti **Verified**.
+5. Crea una API key con permesso di invio: sarà `RESEND_API_KEY`.
 
-## 4. Configurazione email usata dal server
+Il mittente configurato è `NotAStore Accrediti <accrediti@notastore.shop>`. La casella Register.it può continuare a ricevere normalmente: Resend viene utilizzato soltanto dal sito per l’invio automatico.
 
-- Host: `authsmtp.securemail.pro`
-- Porta: `465`
-- Sicurezza: SSL/TLS (`SMTP_SECURE=true`)
-- Username: `accrediti@notastore.shop`
-- Mittente: `NotAStore Accrediti <accrediti@notastore.shop>`
+## 3. Aggiornamento GitHub
 
-Questi valori seguono i parametri SMTP pubblicati da Register.it. Se il piano email acquistato applica limiti o richiede il prodotto “Invii aggiuntivi”, verificarli nel pannello Register.it prima del lancio.
+Nella cartella del progetto:
 
-## 5. Verifica finale
+```powershell
+git add .
+git commit -m "Hosting gratuito con Supabase e Resend"
+git push
+```
 
-1. Registra un account reale con un indirizzo email personale.
-2. Dalla console admin invia un accredito minimo.
-3. Controlla ricezione, cartella spam, link monouso e scadenza.
-4. Esegui `npm run check`, `npm test` e `npm run seo` prima di ogni deploy pubblico.
-5. Apri `/robots.txt`, `/sitemap.xml`, `/privacy`, `/termini` e `/healthz` sul dominio definitivo.
-6. Registra la sitemap in Google Search Console dopo la pubblicazione.
+Controlla che `.env` e `data/notastore.json` non compaiano nel repository.
+
+## 4. Render Free
+
+1. Annulla il vecchio Blueprint a pagamento, se ancora aperto.
+2. In Render scegli **New > Blueprint** e collega nuovamente il repository.
+3. Il nuovo `render.yaml` usa `plan: free` e non crea dischi a pagamento.
+4. Inserisci quando richiesto:
+   - `SUPABASE_URL`;
+   - `SUPABASE_SERVICE_ROLE_KEY`;
+   - `RESEND_API_KEY`;
+   - `NOTASTORE_SOCIAL_CODE`.
+5. Per il test iniziale imposta `PUBLIC_BASE_URL` con l’indirizzo `onrender.com` assegnato al servizio.
+6. Avvia il deploy.
+
+`/healthz` deve restituire un risultato simile a:
+
+```json
+{"ok":true,"service":"notastore","storage":"supabase","email":"resend"}
+```
+
+Se appare `storage: local` o `email: not-configured`, non aprire ancora le registrazioni.
+
+## 5. Primo amministratore
+
+1. Registra sul sito l’account con `info@notastore.shop`.
+2. Apri l’email di verifica ricevuta e conferma l’indirizzo.
+3. Dopo la verifica l’account viene promosso automaticamente ad amministratore.
+4. Esci e rientra se la console admin non compare immediatamente.
+
+## 6. Dominio e test
+
+1. Aggiungi `notastore.shop` nei domini personalizzati di Render.
+2. Configura in Cloudflare il record indicato da Render.
+3. Usa SSL/TLS **Full (strict)** e abilita **Always Use HTTPS**.
+4. Riporta `PUBLIC_BASE_URL` a `https://notastore.shop`.
+5. Verifica registrazione, email, login, ordine, accredito, streak, codice social e inviti.
+6. Apri `/robots.txt`, `/sitemap.xml`, `/privacy`, `/termini` e `/healthz`.
+
+Render Free può sospendere il server dopo un periodo senza visite. Il primo accesso successivo può quindi richiedere più tempo. Supabase Free conserva i dati separatamente e non li perde quando Render si riavvia.
