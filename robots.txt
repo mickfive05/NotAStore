@@ -1,0 +1,10 @@
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /admin
+Disallow: /account
+Disallow: /checkout
+Disallow: /conferma
+Disallow: /claim/
+
+Sitemap: https://notastore.shop/sitemap.xml

@@ -1,0 +1,490 @@
+[
+  {
+    "id": "sp-02",
+    "name": "Galaxy S26 Ultra 5G 256 GB Titanium Gray",
+    "url": "https://static.insales-cdn.com/images/products/1/2481/2798078385/it-galaxy-s26-ultra-s948-578428-sm-s948bzsgeue-550840272.jpg",
+    "file": "images/products/p-sp-02.png",
+    "width": 1200,
+    "height": 1200
+  },
+  {
+    "id": "sp-03",
+    "name": "Pixel 11 Pro 128 GB Obsidian",
+    "url": "https://static.independent.co.uk/2026/08/11/16/02/pixel-11-pro.png?auto=webp&quality=75&width=640",
+    "file": "images/products/p-sp-03.png",
+    "width": 640,
+    "height": 427
+  },
+  {
+    "id": "sp-04",
+    "name": "Xiaomi 16 Ultra 512 GB Ceramic White",
+    "url": "https://i02.appmifile.com/761_item_cl/04/09/2025/5f1f57fb0333b80e5c4e6eedbd614dd3.png?q=85&thumb=1",
+    "file": "images/products/p-sp-04.png",
+    "width": 1200,
+    "height": 1200
+  },
+  {
+    "id": "sp-05",
+    "name": "iPhone 17 256 GB Blu Alpino",
+    "url": "https://image.vandenborre.be/WEB/images/products/superzoom/apple_iphone-17-256gb-mist-blue_7654324_1.jpg",
+    "file": "images/products/p-sp-05.png",
+    "width": 1200,
+    "height": 1200
+  },
+  {
+    "id": "pc-01",
+    "name": "MacBook Pro 16\" M5 Pro 1 TB Space Black",
+    "url": "https://www.epl.si/media/wysiwyg/MacBook_Pro_16-in_M5_Max_Space_Black_PDP_Image_Position_1__ce-WW_3.jpg",
+    "file": "images/products/p-pc-01.png",
+    "width": 1200,
+    "height": 1200
+  },
+  {
+    "id": "pc-02",
+    "name": "XPS 15 Ultra 7 OLED 32 GB RTX 4060",
+    "url": "https://www.notebookcheck.biz/uploads/tx_nbc2/Dell_XPS_15_9530__1_.jpg",
+    "file": "images/products/p-pc-02.png",
+    "width": 1024,
+    "height": 768
+  },
+  {
+    "id": "pc-03",
+    "name": "ThinkPad X1 Carbon Gen 13 i7 16 GB",
+    "url": "https://www.laptopsdirect.co.uk/Images/21NS00MMUK_5_Supersize.jpg?v=3",
+    "file": "images/products/p-pc-03.png",
+    "width": 1200,
+    "height": 1200
+  },
+  {
+    "id": "pc-05",
+    "name": "MacBook Air 13\" M5 512 GB Mezzanotte",
+    "url": "https://d3bqwgyjdqpe80.cloudfront.net/prod/9834013491230.jpg",
+    "file": "images/products/p-pc-05.png",
+    "width": 1200,
+    "height": 1200
+  },
+  {
+    "id": "au-01",
+    "name": "WH-1000XM6 Cuffie Noise Cancelling",
+    "url": "https://cdn.cs.1worldsync.com/0b/56/0b56fc2b-4a12-4f5c-8641-8af6b83f0e89.jpg",
+    "file": "images/products/p-au-01.png",
+    "width": 1200,
+    "height": 900
+  },
+  {
+    "id": "au-03",
+    "name": "QuietComfort Ultra Earbuds Nero",
+    "url": "https://assets.kogan.com/files/product/2025/Bosee_2025/KHBOSEQCUERBLK_Hero.jpg?auto=webp&bg-color=fff&canvas=1200%2C800&dpr=1&enable=upscale&fit=bounds&height=800&quality=90&width=1200",
+    "file": "images/products/p-au-03.png",
+    "width": 1200,
+    "height": 800
+  },
+  {
+    "id": "au-04",
+    "name": "Era 300 Diffusore stereo Wi-Fi",
+    "url": "https://assets.mmsrg.com/isr/166325/c1/-/ASSET_MMS_103207843/fee_786_587_png",
+    "file": "images/products/p-au-04.png",
+    "width": 786,
+    "height": 587
+  },
+  {
+    "id": "au-05",
+    "name": "Momentum 4 Wireless Grafite",
+    "url": "https://uk.sennheiser-hearing.com/cdn/shop/files/MOMENTUM_4_Wireless_Graphite_Flat_Front_56967c58-6803-4dd2-8015-a7b2c58becb3.jpg?v=1704720941",
+    "file": "images/products/p-au-05.png",
+    "width": 1200,
+    "height": 1200
+  },
+  {
+    "id": "sw-01",
+    "name": "Apple Watch Ultra 3 Titano 49 mm",
+    "url": "https://www.humac.dk/sites/default/files/product-images/2025-09/Apple_Watch_Ultra_3_49mm_LTE_Natural_Titanium_Ocean_Band_Anchor_Blue_PDP_Image_Position_1__WWEN.jpg",
+    "file": "images/products/p-sw-01.png",
+    "width": 1200,
+    "height": 900
+  },
+  {
+    "id": "sw-02",
+    "name": "Fenix 8 Pro Sapphire GPS Multisport",
+    "url": "https://vpgno.b-cdn.net/media/48/f4/45/1756963660/010-03199-01_01_Fenix8Pro_51mm_Carbon_Front-left_0000_Hero_1.jpg?ts=1756963660",
+    "file": "images/products/p-sw-02.png",
+    "width": 1200,
+    "height": 1101
+  },
+  {
+    "id": "sw-03",
+    "name": "Galaxy Watch 8 Classic 46 mm",
+    "url": "https://lmt-web.mstatic.lv/eshop/33440/3-samsung-galaxy-watch8-classic-46mm-white.png",
+    "file": "images/products/p-sw-03.png",
+    "width": 1200,
+    "height": 1200
+  },
+  {
+    "id": "tv-01",
+    "name": "OLED evo G5 65\" 4K 144 Hz Gallery",
+    "url": "https://asset.productmarketingcloud.com/api/assetstorage/1995_3f160323-dc3c-4da9-8273-adde44bda126/3240422.jpg",
+    "file": "images/products/p-tv-01.png",
+    "width": 1200,
+    "height": 1200
+  },
+  {
+    "id": "tv-02",
+    "name": "Neo QLED 8K QN900F 75\"",
+    "url": "https://www.dolby.com/globalassets/catalogassets/45a6eb401f596e28fc3675fbec69247518cef65e.jpg?bgcolor=fff&heightratio=0.5625&mode=pad&quality=80&width=1440",
+    "file": "images/products/p-tv-02.png",
+    "width": 1200,
+    "height": 800
+  },
+  {
+    "id": "tv-03",
+    "name": "Bravia 9 Mini LED 75\" XR Backlight",
+    "url": "https://sonyworld.bh/cdn/shop/files/01-BRAVIA-9--75.jpg?v=1719288422",
+    "file": "images/products/p-tv-03.png",
+    "width": 1200,
+    "height": 1200
+  },
+  {
+    "id": "tv-04",
+    "name": "Smart TV 55\" Mini LED 4K 120 Hz",
+    "url": "https://atehno.md/files/items/55-led-smart-tv-hisense-55u7q-9857902413374.png",
+    "file": "images/products/p-tv-04.png",
+    "width": 1024,
+    "height": 768
+  },
+  {
+    "id": "co-01",
+    "name": "PlayStation 5 Pro 2 TB",
+    "url": "https://media2.nbb-cdn.de/images/products/PS5PRO_PR_01_RGB_79df.png",
+    "file": "images/products/p-co-01.png",
+    "width": 1200,
+    "height": 1200
+  },
+  {
+    "id": "co-02",
+    "name": "Nintendo Switch 2 + Bundle Mario Kart",
+    "url": "https://cdn.affilizz.com/__s__/images/products/v2/fr_FR/67ee4944/2d4643/4e5b/cf19b5_main.jpg",
+    "file": "images/products/p-co-02.png",
+    "width": 1200,
+    "height": 1087
+  },
+  {
+    "id": "co-03",
+    "name": "Xbox Series X 2 TB Galaxy Black",
+    "url": "https://cms-assets.xboxservices.com/assets/37/d2/37d211d0-5c2c-42c6-bb71-ca7492c5e088.png?n=642227_Hero-Gallery-0_C1_857x676.png",
+    "file": "images/products/p-co-03.png",
+    "width": 857,
+    "height": 676
+  },
+  {
+    "id": "vg-01",
+    "name": "Marvel’s Spider-Man 3 — PS5",
+    "url": "https://m.media-amazon.com/images/I/61D1wOummmL.jpg_BO30%2C255%2C255%2C255_UF750%2C750_SR1910%2C1000%2C0%2CC_QL100_.jpg",
+    "file": "images/products/p-vg-01.png",
+    "width": 1200,
+    "height": 628
+  },
+  {
+    "id": "vg-02",
+    "name": "The Legend of Zelda: Echi del Regno",
+    "url": "https://images.tcdn.com.br/img/img_prod/993382/the_legend_of_zelda_tears_of_the_kingdom_nintendo_switch_813_1_f6ff23242d1ec3b0a0bcf16caa2c2f3f.jpg",
+    "file": "images/products/p-vg-02.png",
+    "width": 1200,
+    "height": 1200
+  },
+  {
+    "id": "vg-03",
+    "name": "EA SPORTS FC 27 Ultimate Edition",
+    "url": "https://playpack.store/cdn/shop/files/c06fb222-a7c7-424a-b4f4-e0c047df3cfa.jpg?v=1784798745&width=600",
+    "file": "images/products/p-vg-03.png",
+    "width": 600,
+    "height": 786
+  },
+  {
+    "id": "vg-04",
+    "name": "Grand Theft Auto VI — PS5",
+    "url": "https://miro.medium.com/v2/resize%3Afit%3A1400/0%2AvV3w3YEu4qSRXhS4",
+    "file": "images/products/p-vg-04.png",
+    "width": 860,
+    "height": 1101
+  },
+  {
+    "id": "sc-01",
+    "name": "Air Jordan 1 Retro High OG Chicago",
+    "url": "https://cdn.shopify.com/s/files/1/0597/5149/7900/products/555088-101_1_1_1500x.png?v=1631181191",
+    "file": "images/products/p-sc-01.png",
+    "width": 1200,
+    "height": 720
+  },
+  {
+    "id": "sc-02",
+    "name": "Samba OG Pelle Bianco Nero",
+    "url": "https://thn.pe/cdn/shop/files/IH4879_1.jpg?v=1723588624",
+    "file": "images/products/p-sc-02.png",
+    "width": 1200,
+    "height": 1200
+  },
+  {
+    "id": "sc-03",
+    "name": "990v6 Made in USA Grigio",
+    "url": "https://newbalance.ua/img/photos/photo44947.jpg",
+    "file": "images/products/p-sc-03.png",
+    "width": 1200,
+    "height": 1200
+  },
+  {
+    "id": "sc-04",
+    "name": "Vaporfly 4 Running Elite",
+    "url": "https://maxi.gumlet.io/media/catalog/product/n/i/nike-hf6414-vaporfly-4-scarpe-running-uomo-050537401-001_1.jpg",
+    "file": "images/products/p-sc-04.png",
+    "width": 1200,
+    "height": 1200
+  },
+  {
+    "id": "ab-01",
+    "name": "Giubbotto Maya Down Nero",
+    "url": "https://hirshleifers.com/cdn/shop/files/9827870b73eed7287df694a7c1300c2c.png?v=1723823911&width=640",
+    "file": "images/products/p-ab-01.png",
+    "width": 640,
+    "height": 680
+  },
+  {
+    "id": "ab-02",
+    "name": "Felpa Crewneck Cotone Blu Navy",
+    "url": "https://kream-phinf.pstatic.net/MjAyNTA3MzBfNzgg/MDAxNzUzODc2MTM0MDQz.WhXRH502hSfTH8JguJ_Wo9oCjh32zNopqI6pvkHq7Tgg.0r9wzPhAZOFHkAEY2tH8hs3EOQWaa4DEhwziYHmPPgcg.PNG/a_9681e1d9e9cb4ca089d9030da7bd4833.png",
+    "file": "images/products/p-ab-02.png",
+    "width": 1120,
+    "height": 1120
+  },
+  {
+    "id": "ab-03",
+    "name": "Camicia Oxford Slim Blu",
+    "url": "https://hoyer-raw.b-cdn.net/products/2834203/polo-ralph-lauren-slim-fit-oxford-lysebl-skjorte-herre.jpg",
+    "file": "images/products/p-ab-03.png",
+    "width": 924,
+    "height": 1200
+  },
+  {
+    "id": "oc-01",
+    "name": "Aviator Classic Lenti Gradient Oro",
+    "url": "https://assets2.glasses.com/prod-onecp-record-files/pieyewear/1625439c-6c6a-45f8-8a90-b35d00db7c0c/0RB3025__112_85__STD__shad__qt.png?impolicy=GL_IGFB",
+    "file": "images/products/p-oc-01.png",
+    "width": 1200,
+    "height": 1200
+  },
+  {
+    "id": "oc-02",
+    "name": "PO0714 Folding Havana 54",
+    "url": "https://assets2.opsm.com/cdn-record-files-pi/355fff55-2212-450e-90be-a3a80090dfd5/0591a778-1061-4df7-ab8f-aed6012cbc81/0PO0714__24_31__P21__shad__fr.png?impolicy=OP_Large",
+    "file": "images/products/p-oc-02.png",
+    "width": 1200,
+    "height": 600
+  },
+  {
+    "id": "oc-03",
+    "name": "Meta Wayfarer Smart Glasses Matte Black",
+    "url": "https://cdn.shopify.com/s/files/1/0568/5290/6049/files/E71030905_Ray-Ban_Meta_Wayfarer_Polarised_Gradient_Lenses_Matte_Black.png?v=1757516537",
+    "file": "images/products/p-oc-03.png",
+    "width": 1000,
+    "height": 1000
+  },
+  {
+    "id": "oc-04",
+    "name": "Whitman FT0833 Occhiale da Sole",
+    "url": "https://vistaexpert.it/cdn/shop/files/ft0835_01a_01.jpg?v=1728468342&width=2048",
+    "file": "images/products/p-oc-04.png",
+    "width": 1200,
+    "height": 900
+  },
+  {
+    "id": "pr-01",
+    "name": "Sauvage Eau de Parfum 100 ml",
+    "url": "https://buybeautique.com/cdn/shop/files/s2038131-main-zoom.webp?v=1695292626",
+    "file": "images/products/p-pr-01.png",
+    "width": 1200,
+    "height": 1200
+  },
+  {
+    "id": "pr-02",
+    "name": "Bleu de Chanel Parfum 100 ml",
+    "url": "https://cdn.salla.sa/WWBVr/207e7b91-9d76-4ad7-8288-25d0d20f7467-794.27549194991x1000-NICRFtGohb7rxhlGcsvFaq9pQv2rX8L8XrCbM6pX.jpg",
+    "file": "images/products/p-pr-02.png",
+    "width": 794,
+    "height": 1000
+  },
+  {
+    "id": "pr-03",
+    "name": "Oud Wood Eau de Parfum 50 ml",
+    "url": "https://shopbitsandpieces.com.au/cdn/shop/products/1a4c82a3a217a6a20eee06bf0656dca2502c2442.png?v=1613697013&width=1920",
+    "file": "images/products/p-pr-03.png",
+    "width": 1200,
+    "height": 1200
+  },
+  {
+    "id": "pr-05",
+    "name": "Santal 33 Eau de Parfum 50 ml",
+    "url": "https://cdn.mos.cms.futurecdn.net/Y7qaqhWkYnK8VMvbiU3SFk-1920-80.png",
+    "file": "images/products/p-pr-05.png",
+    "width": 800,
+    "height": 1200
+  },
+  {
+    "id": "sk-01",
+    "name": "Crème de la Mer Idratante 60 ml",
+    "url": "https://images.matas.dk/encode/747930000013_20250527180300.jpg",
+    "file": "images/products/p-sk-01.png",
+    "width": 1200,
+    "height": 1200
+  },
+  {
+    "id": "sk-03",
+    "name": "C E Ferulic Siero Antiossidante 30 ml",
+    "url": "https://haloskin.mx/cdn/shop/products/635494363210_C-E-Ferulic-30ml_SkinCeuticals.jpg?v=1661814917",
+    "file": "images/products/p-sk-03.png",
+    "width": 1200,
+    "height": 1200
+  },
+  {
+    "id": "sk-04",
+    "name": "Advanced Night Repair Siero 50 ml",
+    "url": "https://www.price.com.hk/space/ec_product/shop/1986000/1986946_qlgjtr_0.png",
+    "file": "images/products/p-sk-04.png",
+    "width": 800,
+    "height": 800
+  },
+  {
+    "id": "el-01",
+    "name": "Airwrap i.d. Multistyler Ferro/Blu",
+    "url": "https://news.nateimg.co.kr/orgImg/ey/2024/09/23/20240923092559_2079913_1200_2128.jpeg",
+    "file": "images/products/p-el-01.png",
+    "width": 540,
+    "height": 958
+  },
+  {
+    "id": "el-02",
+    "name": "V16 Piston Animal Scopa Senza Fili",
+    "url": "https://www.d-one.lt/image/cache/dyson-v16-piston-animal-belaidis-dulkiu-siurblys-202509121724010-670x670.png",
+    "file": "images/products/p-el-02.png",
+    "width": 670,
+    "height": 670
+  },
+  {
+    "id": "el-03",
+    "name": "Macchina Caffè Eletta Explore Macchiato",
+    "url": "https://assets.mmsrg.com/isr/166325/c1/-/ASSET_MMS_150272108/fee_786_587_png",
+    "file": "images/products/p-el-03.png",
+    "width": 786,
+    "height": 587
+  },
+  {
+    "id": "el-04",
+    "name": "Robot da Cucina Artisan 4,8 L Crema",
+    "url": "https://kitchen.eu/7499-large_default/kitchenaid-artisan-48-l-tilt-head-stand-mixer-almond-cream-5ksm125eac.jpg",
+    "file": "images/products/p-el-04.png",
+    "width": 800,
+    "height": 800
+  },
+  {
+    "id": "el-05",
+    "name": "Friggitrice ad Aria Smart Oven Air 11 L",
+    "url": "https://m.media-amazon.com/images/S/aplus-media-library-service-media/3cdb8a53-797a-48bf-aa07-9f7d3455dae3.__CR0%2C0%2C600%2C450_PT0_SX600_V1___.png",
+    "file": "images/products/p-el-05.png",
+    "width": 600,
+    "height": 450
+  },
+  {
+    "id": "ar-01",
+    "name": "Divano modulare in tecnopolimero riciclato",
+    "url": "https://d3trhmpc56lg1h.cloudfront.net/IMG/KARTELL/PRODUCTS/HD/KARBA06293T4_1.jpg?d=391x498",
+    "file": "images/products/p-ar-01.png",
+    "width": 943,
+    "height": 1200
+  },
+  {
+    "id": "ar-02",
+    "name": "Poltrona in pelle Frau Proportions",
+    "url": "https://designitaly.com/cdn/shop/products/Dove-Leather-Armchair-2019-Poltrona-Frau-1-5145112_SC23.jpg?v=1669740190",
+    "file": "images/products/p-ar-02.png",
+    "width": 1200,
+    "height": 1200
+  },
+  {
+    "id": "ar-03",
+    "name": "Lampada da terra Tolomeo Mega LED",
+    "url": "https://www.einrichten-design.de/thumbnail/97/2d/c1/1597860238/Tolomeo%20Mega%20Floor%20Stehleuchte%20Body%20mit%20AnAus%20Schalter%20Aluminium%20Artemide2e9ae_1920x1920.jpg",
+    "file": "images/products/p-ar-03.png",
+    "width": 914,
+    "height": 1200
+  },
+  {
+    "id": "ar-05",
+    "name": "Tavolo massello di noce 220 cm",
+    "url": "https://www.riva1920.it/components/com_riva/files/products/newton_extra_natural_sides1743497469.jpg",
+    "file": "images/products/p-ar-05.png",
+    "width": 1200,
+    "height": 1200
+  },
+  {
+    "id": "at-02",
+    "name": "Pilot Sport 5 — 245/40 R18 97Y",
+    "url": "https://images.tcdn.com.br/img/img_prod/1094037/pneu_michelin_aro_18_pilot_sport_5_245_40r18_97y_xl_tl_913_1_ebcb740e9685d10518c771aaa94194fb.png",
+    "file": "images/products/p-at-02.png",
+    "width": 1200,
+    "height": 1200
+  },
+  {
+    "id": "at-04",
+    "name": "Caricatore Solare Portatile 250W",
+    "url": "https://cdn11.bigcommerce.com/s-bi8c0htqsn/images/stencil/original/products/5128/7240/A24360A1_Product_Image_02_US_V1__95669.1726588017.jpg?c=1",
+    "file": "images/products/p-at-04.png",
+    "width": 1000,
+    "height": 1000
+  },
+  {
+    "id": "at-05",
+    "name": "Box da tetto Motion 3 XL 500 L",
+    "url": "https://a.allegroimg.com/original/113626/55a1db354222bea1ca4e284caff9/BOX-BAGAZNIK-THULE-MOTION-3-XL-WHITE-639802-500L-BIALYSTOK",
+    "file": "images/products/p-at-05.png",
+    "width": 1200,
+    "height": 800
+  },
+  {
+    "id": "so-01",
+    "name": "Tapis Roulant Run Personal",
+    "url": "https://media.architonic.com/m-on/3103314/product/1413115/technogym_run-personal_2f4db3c6.jpeg?format=webp&quality=75",
+    "file": "images/products/p-so-01.png",
+    "width": 1200,
+    "height": 1026
+  },
+  {
+    "id": "so-02",
+    "name": "Bike+ Cyclette Connected",
+    "url": "https://images-na.ssl-images-amazon.com/images/I/61Pji0r8MxL.jpg",
+    "file": "images/products/p-so-02.png",
+    "width": 1200,
+    "height": 1200
+  },
+  {
+    "id": "so-03",
+    "name": "Edge 1050 Computer da Ciclismo GPS",
+    "url": "https://www.asadventure.com/content/dam/asadventure/contentpages/bike/de-7-best-verkochte-fiets-gps%E2%80%99en-van-2022/update-2026/packshots/-Garmin-Edge-1050_%402x.png/jcr%3Acontent/renditions/cq5dam.web.512.512%402x.png",
+    "file": "images/products/p-so-03.png",
+    "width": 1024,
+    "height": 1024
+  },
+  {
+    "id": "so-04",
+    "name": "Set Manubri Regolabili 32 kg",
+    "url": "https://sportsbuddy.dk/cdn/shop/products/asg-haandvaegt-32kg-40113-p_2048x2048.jpg?v=1668763059",
+    "file": "images/products/p-so-04.png",
+    "width": 800,
+    "height": 800
+  },
+  {
+    "id": "so-05",
+    "name": "Tavola da Paddle Gonfiabile 11\"",
+    "url": "https://contents.mediadecathlon.com/p1633368/k%2427d42ed35a68911c1241d952f631e772/beginner-inflatable-touring-stand-up-paddle-board-11-feet-blue.jpg",
+    "file": "images/products/p-so-05.png",
+    "width": 1200,
+    "height": 1200
+  }
+]

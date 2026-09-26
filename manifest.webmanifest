@@ -1,0 +1,11 @@
+{
+  "name": "NotAStore — Shopping Simulator",
+  "short_name": "NotAStore",
+  "start_url": "/#/",
+  "scope": "/",
+  "description": "Shopping simulator digitale senza acquisti o pagamenti reali.",
+  "display": "standalone",
+  "background_color": "#f7f6f2",
+  "theme_color": "#1f242b",
+  "icons": [{ "src": "images/notastore-mark.svg", "sizes": "any", "type": "image/svg+xml" }]
+}

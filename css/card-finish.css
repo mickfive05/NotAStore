@@ -1,0 +1,58 @@
+/* Physical card surfaces. All rules are scoped to the existing card component. */
+.wallet-card {
+  aspect-ratio: 1.586 / 1; min-height: 0; border-radius: 12px;
+  padding: 6%; container-type: inline-size; isolation: isolate;
+  color: #e8e8e5; border: 1px solid rgba(255,255,255,.18);
+  box-shadow: 0 4px 9px #11182720, inset 0 1px 0 #ffffff45, inset 0 -1px 0 #00000040;
+  transform: perspective(1000px) rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg));
+  transition: transform .25s ease-out, box-shadow .3s; will-change: auto;
+}
+.wallet-card.active { box-shadow: 0 4px 9px #11182725, inset 0 1px 0 #ffffff45, inset 0 -1px 0 #00000040; }
+.wallet-card::before { content:""; position:absolute; inset:0; z-index:0; pointer-events:none; opacity:.25; background:repeating-linear-gradient(103deg,transparent 0 2px,#ffffff09 2px 3px); }
+.wallet-card::after { content:""; inset:0; width:auto; height:auto; border:0; border-radius:inherit; z-index:5; pointer-events:none; background:radial-gradient(ellipse at var(--light-x,24%) var(--light-y,0%),#ffffff24,transparent 62%); opacity:.45; transition:opacity .3s; }
+.wallet-card .card-name { gap:8px; align-items:flex-start; min-height:24%; z-index:3; }
+.wallet-card .card-name>strong { max-width:72%; font-size:clamp(10px,4cqw,18px); font-weight:600; line-height:1.15; letter-spacing:.01em; text-shadow:0 1px 0 #ffffff15; }
+.wallet-card .card-name .badge { flex:none; padding:3px 5px; font-size:clamp(6px,2.3cqw,9px); letter-spacing:.06em; border:1px solid currentColor; background:transparent; color:inherit; opacity:.7; border-radius:3px; }
+.wallet-card .card-top { margin:0; height:27%; gap:4%; position:static; }
+.wallet-card .card-chip { width:16%; height:auto; aspect-ratio:1.3; color:#d3c397; border-radius:6px; background:linear-gradient(115deg,#a69771,#f0e8cd 42%,#b7a980 77%,#e7d8ab); box-shadow:0 1px 1px #0005,inset 0 0 0 1px #fff6; z-index:2; }
+.wallet-card .card-chip rect:first-child { opacity:.18; }
+.wallet-card .contactless { width:6%; height:auto; transform:none; opacity:.72; z-index:2; }
+.wallet-card .network { position:absolute; right:6%; top:40%; width:23%; height:18%; object-fit:contain; margin:0; z-index:2; }
+.wallet-card .network-mastercard { width:22%; height:25%; top:auto; bottom:7%; }
+.wallet-card .network-amex { width:28%; height:21%; top:37%; opacity:.9; }
+.wallet-card .network-postepay { width:32%; height:15%; filter:brightness(0) saturate(100%) invert(15%) sepia(28%) saturate(1634%) hue-rotate(185deg); }
+.wallet-card .number { margin-top:5%; font:500 clamp(12px,6cqw,24px)/1.15 "Courier New",monospace; letter-spacing:.07em; z-index:2; position:relative; text-shadow:0 1px 0 #fff4,0 -1px 0 #0005; white-space:nowrap; }
+.wallet-card .card-bottom { margin-top:auto; align-items:flex-end; gap:8px; z-index:2; }
+.wallet-card .card-bottom>div:first-child { max-width:79%; }
+.wallet-card .card-bottom strong { font:500 clamp(8px,3.5cqw,14px)/1.15 "Courier New",monospace; letter-spacing:.04em; margin-top:3px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.wallet-card small { font-size:clamp(6px,2.1cqw,9px); color:inherit; opacity:.7; letter-spacing:.1em; }
+.wallet-card.finish-3 .card-bottom,.wallet-card.finish-7 .card-bottom { padding-right:27%; }
+.wallet-card .card-engraving { position:absolute; inset:0; pointer-events:none; z-index:0; }
+.wallet-card.finish-1 { color:#1d3050; background:linear-gradient(113deg,#f2dc51,#f5e67e 52%,#e4ca42); border-color:#d1bd58; }
+.wallet-card.finish-1 .card-engraving { background:linear-gradient(112deg,transparent 59%,#f9edaa55 59.2%,transparent 80%); }
+.wallet-card.finish-2 { background:linear-gradient(119deg,#173650,#284a66 53%,#122e47); }
+.wallet-card.finish-2 .card-engraving { inset:35% -30% -90% 12%; border:1px solid #c1d4e830; border-radius:50%; box-shadow:0 0 0 12px #b6cfe20a,0 0 0 26px #b6cfe209,0 0 0 42px #b6cfe208; transform:rotate(-25deg); }
+.wallet-card.finish-3 { background:linear-gradient(125deg,#344148,#222c32 65%,#1a2329); }
+.wallet-card.finish-3 .card-engraving { background:linear-gradient(65deg,transparent 53%,#9ba3a90a 53.2%,#9ba3a90a 77%,transparent 77.2%); }
+.wallet-card.finish-4 { color:#4c3b20; background:linear-gradient(113deg,#bba06a,#e1cd9c 43%,#c6ab75 77%,#d6bd88); border-color:#a58b56; }
+.wallet-card.finish-4::before,.wallet-card.finish-8::before,.wallet-card.finish-9::before { opacity:.45; background:repeating-linear-gradient(0deg,#fff0 0 1px,#ffffff12 1px 2px,#00000008 2px 3px); }
+.wallet-card.finish-4 .network-visa { filter:brightness(0) saturate(100%) opacity(.7); }
+.wallet-card.finish-5 { color:#edf0d9; background:linear-gradient(110deg,#38604a,#54775b 48%,#365540); }
+.wallet-card.finish-5 .card-engraving,.wallet-card.finish-8 .card-engraving,.wallet-card.finish-9 .card-engraving { inset:3%; border:3px double #cbd1b47a; border-radius:8px; background:repeating-radial-gradient(ellipse at 50% 50%,transparent 0 4px,#e4e7d00b 4.5px 5px); }
+.wallet-card .card-portrait { position:absolute; width:22%; height:36%; top:26%; left:39%; background:url('../images/cards/amex-platinum-reference.png') 50% 51% / 400% auto no-repeat; border-radius:50%; mix-blend-mode:luminosity; opacity:.8; z-index:1; }
+.wallet-card.finish-5 .number,.wallet-card.finish-8 .number,.wallet-card.finish-9 .number { margin-top:6%; font-size:clamp(11px,5.5cqw,23px); }
+.wallet-card.finish-5 .network-amex,.wallet-card.finish-8 .network-amex,.wallet-card.finish-9 .network-amex { width:22%; right:7%; top:39%; opacity:.7; }
+.wallet-card.finish-6 { background:linear-gradient(115deg,#151a21,#252a31 46%,#101319); border-color:#46494e; }
+.wallet-card.finish-6 .card-engraving { background:linear-gradient(125deg,transparent 48%,#ffffff06 48.2%,transparent 70%); }
+.wallet-card.finish-7 { background:linear-gradient(100deg,#0e1113,#252729 55%,#111416); border-color:#454647; }
+.wallet-card.finish-7 .network-mastercard { filter:grayscale(1) brightness(1.7); }
+.wallet-card.finish-7 .card-engraving { inset:9%; border-top:1px solid #b7b9ba22; border-bottom:1px solid #b7b9ba22; transform:rotate(-30deg) scale(1.6); }
+.wallet-card.finish-8 { color:#333b40; background:linear-gradient(110deg,#b2b8bc,#e1e3e3 44%,#b8bfc3 75%,#cbd0d2); border-color:#a7adb0; }
+.wallet-card.finish-8 .card-engraving { border-color:#59636780; }
+.wallet-card.finish-8 .network-amex { filter:brightness(0); }
+.wallet-card.finish-9 { color:#c1c0b9; background:linear-gradient(112deg,#080a0c,#25282a 47%,#101214 80%,#16191b); border:1px solid #494b4b; }
+.wallet-card.finish-9 .card-engraving { border-color:#8d8e842d; background:repeating-radial-gradient(ellipse at center,transparent 0 4px,#c3c3bd05 4.5px 5px); }
+.wallet-card.finish-9 .card-portrait { opacity:.32; filter:contrast(1.3); }
+.wallet-card.finish-9 .card-name>strong { font-size:clamp(9px,3.4cqw,15px); letter-spacing:.03em; }
+@media (hover:hover) and (pointer:fine) { .wallet-card:hover { box-shadow:0 7px 13px #1118272b,inset 0 1px 0 #ffffff50,inset 0 -1px 0 #00000055; }.wallet-card:hover::after { opacity:.8; } }
+@media (prefers-reduced-motion:reduce) { .wallet-card { transform:none!important; transition:none; }.wallet-card::after { transition:none; } }

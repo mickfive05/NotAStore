@@ -1,0 +1,7 @@
+.env
+node_modules/
+data/test-*.json
+data/notastore-i18n-test.json
+data/notastore.json
+data/preview-*.json
+*.log
