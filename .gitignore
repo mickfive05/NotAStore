@@ -3,6 +3,8 @@ node_modules/
 dist/
 supabase/.temp/
 launch-*-preview*.png
+.wrangler/
+launch-preview.png
 data/test-*.json
 data/notastore-i18n-test.json
 data/notastore.json
