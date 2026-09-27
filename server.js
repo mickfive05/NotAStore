@@ -687,8 +687,8 @@ export function handleEdgeRequest(request) {
   const run = async () => {
     await loadDb();
     const incoming = new URL(request.url);
-    const marker = '/functions/v1/notastore';
-    const pathname = incoming.pathname.startsWith(marker) ? incoming.pathname.slice(marker.length) || '/' : incoming.pathname;
+    const marker = ['/functions/v1/notastore', '/notastore'].find((value) => incoming.pathname.startsWith(value));
+    const pathname = marker ? incoming.pathname.slice(marker.length) || '/' : incoming.pathname;
     const req = new EdgeRequestAdapter(request, pathname);
     const res = new EdgeResponseAdapter();
     await routeRequest(req, res);

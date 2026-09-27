@@ -1,6 +1,6 @@
-import { updateCatalog } from './catalog-updates.js?v=20260922c';
+import { updateCatalog } from './catalog-updates.js';
 import { EXTRA_PRODUCTS } from './catalog-expansion.js';
-import { currentLocale } from './i18n.js?v=20260925i18n2';
+import { currentLocale } from './i18n.js';
 
 export const CATEGORIES = [
   { slug: 'smartphone', name: 'Smartphone', group: 'Elettronica', icon: '📱' },
