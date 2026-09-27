@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "start": "node --env-file-if-exists=.env server.js",
+    "build:pages": "node scripts/build-pages.mjs",
     "seo": "node scripts/generate-seo.mjs",
     "check": "node --check server.js && node --check js/app.js && node --check js/store.js && node --check js/views.js && node --check js/data.js && node --check js/ui.js",
     "test": "node tests/smoke.mjs && node tests/supabase-storage.mjs"

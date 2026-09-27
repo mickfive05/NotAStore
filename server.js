@@ -1,17 +1,13 @@
-import http from 'node:http';
-import { readFile, writeFile, rename, mkdir, stat } from 'node:fs/promises';
-import { createReadStream } from 'node:fs';
-import { extname, join, normalize, resolve } from 'node:path';
 import { randomBytes, randomUUID, scryptSync, timingSafeEqual, createHash } from 'node:crypto';
-import { fileURLToPath } from 'node:url';
+import { Buffer } from 'node:buffer';
 import { PRODUCTS, variantPrice, variantTitle, variantImage } from './js/data.js';
 
-const ROOT = fileURLToPath(new URL('.', import.meta.url));
-const DATA_DIR = join(ROOT, 'data');
-const DB_FILE = process.env.NOTASTORE_DB_FILE || join(DATA_DIR, 'notastore.json');
-const PORT = Number(process.env.PORT || 8000);
-const SUPABASE_URL = String(process.env.SUPABASE_URL || '').replace(/\/$/, '');
-const SUPABASE_SERVICE_ROLE_KEY = String(process.env.SUPABASE_SERVICE_ROLE_KEY || '');
+const IS_EDGE = typeof Deno !== 'undefined';
+const ENV = IS_EDGE ? Deno.env.toObject() : process.env;
+const ROOT_URL = new URL('.', import.meta.url);
+const PORT = Number(ENV.PORT || 8000);
+const SUPABASE_URL = String(ENV.SUPABASE_URL || '').replace(/\/$/, '');
+const SUPABASE_SERVICE_ROLE_KEY = String(ENV.SUPABASE_SERVICE_ROLE_KEY || '');
 const USE_SUPABASE = Boolean(SUPABASE_URL && SUPABASE_SERVICE_ROLE_KEY);
 const STATE_ID = 'primary';
 const LEVELS = [
@@ -36,7 +32,7 @@ let db = { users: [], sessions: [], rewards: [], outbox: [], emailVerifications:
 const translationCache = new Map();
 let writeQueue = Promise.resolve();
 const rate = new Map();
-const isProduction = process.env.NODE_ENV === 'production';
+const isProduction = IS_EDGE || ENV.NODE_ENV === 'production';
 
 function securityHeaders() {
   return {
@@ -65,8 +61,14 @@ async function loadDb() {
       if (!created.ok) throw new Error(`Impossibile inizializzare Supabase (${created.status}).`);
     }
   } else {
-    await mkdir(DATA_DIR, { recursive: true });
-    try { db = JSON.parse(await readFile(DB_FILE, 'utf8')); }
+    const { readFile, mkdir } = await import('node:fs/promises');
+    const { join } = await import('node:path');
+    const { fileURLToPath } = await import('node:url');
+    const root = fileURLToPath(ROOT_URL);
+    const dataDir = join(root, 'data');
+    const dbFile = ENV.NOTASTORE_DB_FILE || join(dataDir, 'notastore.json');
+    await mkdir(dataDir, { recursive: true });
+    try { db = JSON.parse(await readFile(dbFile, 'utf8')); }
     catch { await persist(); }
   }
   let changed = false;
@@ -93,9 +95,15 @@ function persist() {
       const response = await fetch(`${SUPABASE_URL}/rest/v1/notastore_state?id=eq.${STATE_ID}`, { method: 'PATCH', headers: supabaseHeaders({ Prefer: 'return=minimal' }), body: JSON.stringify({ state: db, updated_at: new Date().toISOString() }) });
       if (!response.ok) throw new Error(`Salvataggio Supabase non riuscito (${response.status}).`);
     } else {
-      const tmp = `${DB_FILE}.tmp`;
+      const { writeFile, rename, mkdir } = await import('node:fs/promises');
+      const { join } = await import('node:path');
+      const { fileURLToPath } = await import('node:url');
+      const dataDir = join(fileURLToPath(ROOT_URL), 'data');
+      const dbFile = ENV.NOTASTORE_DB_FILE || join(dataDir, 'notastore.json');
+      await mkdir(dataDir, { recursive: true });
+      const tmp = `${dbFile}.tmp`;
       await writeFile(tmp, JSON.stringify(db, null, 2), 'utf8');
-      await rename(tmp, DB_FILE);
+      await rename(tmp, dbFile);
     }
   });
   return writeQueue;
@@ -183,15 +191,15 @@ function transaction(user, type, amount, meta = {}) {
 }
 
 async function deliverMail(user, mail, content) {
-  if (user.isDemo || process.env.NOTASTORE_TEST_OUTBOX === 'true') {
+  if (user.isDemo || ENV.NOTASTORE_TEST_OUTBOX === 'true') {
     db.outbox.unshift({ ...mail, delivery: 'internal' });
     return 'internal';
   }
-  if (!process.env.RESEND_API_KEY || !process.env.EMAIL_FROM) throw new Error('Invio email non configurato. Imposta RESEND_API_KEY ed EMAIL_FROM.');
+  if (!ENV.RESEND_API_KEY || !ENV.EMAIL_FROM) throw new Error('Invio email non configurato. Imposta RESEND_API_KEY ed EMAIL_FROM.');
   const response = await fetch('https://api.resend.com/emails', {
     method: 'POST',
-    headers: { Authorization: `Bearer ${process.env.RESEND_API_KEY}`, 'Content-Type': 'application/json' },
-    body: JSON.stringify({ from: process.env.EMAIL_FROM, to: [user.email], subject: mail.subject, text: content.text, html: content.html }),
+    headers: { Authorization: `Bearer ${ENV.RESEND_API_KEY}`, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ from: ENV.EMAIL_FROM, to: [user.email], subject: mail.subject, text: content.text, html: content.html }),
   });
   if (!response.ok) {
     const details = await response.text();
@@ -207,7 +215,7 @@ async function createEmailVerification(user) {
   const now = new Date();
   const verification = { id: `EV-${randomUUID()}`, userId: user.id, tokenHash: createHash('sha256').update(token).digest('hex'), createdAt: now.toISOString(), expiresAt: new Date(now.getTime() + 24 * 60 * 60 * 1000).toISOString(), usedAt: null };
   db.emailVerifications.push(verification);
-  const publicBase = String(process.env.PUBLIC_BASE_URL || `http://localhost:${PORT}`).replace(/\/$/, '');
+  const publicBase = String(ENV.PUBLIC_BASE_URL || `http://localhost:${PORT}`).replace(/\/$/, '');
   const claimUrl = `/verify/${token}`;
   const mail = { id: `MAIL-${randomUUID()}`, userId: user.id, to: user.email, type: 'VERIFY_EMAIL', subject: 'Verifica il tuo account NotAStore', createdAt: now.toISOString(), expiresAt: verification.expiresAt, claimUrl };
   await deliverMail(user, mail, {
@@ -226,7 +234,7 @@ async function createReward(user, type, amount, level, meta = {}) {
   const claimUrl = `/claim/${token}`;
   const subjects = { LEVEL_UP_BONUS: `Hai sbloccato ${card}`, STREAK_BONUS: 'Premio streak NotAStore', SOCIAL_SHARE: 'Premio condivisione NotAStore', SOCIAL_FOLLOW: 'Premio social NotAStore', REFERRAL_INVITER: 'Un tuo invito è stato completato', REFERRAL_WELCOME: 'Bonus benvenuto da invito' };
   const mail = { id: `MAIL-${randomUUID()}`, userId: user.id, to: user.email, type, subject: subjects[type] || 'Hai ricevuto un accredito', amount, card, createdAt: reward.createdAt, expiresAt: reward.expiresAt, claimUrl };
-  const publicBase = String(process.env.PUBLIC_BASE_URL || `http://localhost:${PORT}`).replace(/\/$/, '');
+  const publicBase = String(ENV.PUBLIC_BASE_URL || `http://localhost:${PORT}`).replace(/\/$/, '');
   let delivery;
   try { delivery = await deliverMail(user, mail, {
     text: `Hai ricevuto un accredito virtuale NotAStore di ${amount} €. Apri questo link entro 24 ore: ${publicBase}${claimUrl}`,
@@ -272,9 +280,9 @@ function rewardCenter(user) {
     shareAvailableAt,
     canShareReward: !shareAvailableAt || new Date(shareAvailableAt).getTime() <= Date.now(),
     followReward: amountFor(user, 0.50),
-    socialCodeConfigured: Boolean(process.env.NOTASTORE_SOCIAL_CODE),
+    socialCodeConfigured: Boolean(ENV.NOTASTORE_SOCIAL_CODE),
     inviteCode: user.inviteCode,
-    inviteUrl: `${String(process.env.PUBLIC_BASE_URL || `http://localhost:${PORT}`).replace(/\/$/, '')}/#/invito/${encodeURIComponent(user.inviteCode)}`,
+    inviteUrl: `${String(ENV.PUBLIC_BASE_URL || `http://localhost:${PORT}`).replace(/\/$/, '')}/#/invito/${encodeURIComponent(user.inviteCode)}`,
     referralInviterReward: amountFor(user, 1),
     referralWelcomeReward: amountFor(user, 0.50),
     referralStats: {
@@ -320,7 +328,7 @@ function bootstrap(user) {
     orders: user.orders,
     transactions: user.transactions,
     rewards: db.rewards.filter((r) => r.userId === user.id).map(({ claimHash, ...r }) => r),
-    outbox: (user.isDemo || process.env.NOTASTORE_TEST_OUTBOX === 'true') ? db.outbox.filter((m) => m.userId === user.id) : [],
+    outbox: (user.isDemo || ENV.NOTASTORE_TEST_OUTBOX === 'true') ? db.outbox.filter((m) => m.userId === user.id) : [],
     stats: { totalSpent: user.totalSpent, orders: user.orders.length, rank: leaderboard().findIndex((x) => x.id === user.id) + 1, next },
     rewardCenter: rewardCenter(user),
   };
@@ -440,7 +448,7 @@ async function api(req, res, url) {
   }
 
   if (req.method === 'POST' && url.pathname === '/api/rewards/social/code') {
-    const data = await body(req); const configured = String(process.env.NOTASTORE_SOCIAL_CODE || '').trim().toUpperCase(); const supplied = String(data.code || '').trim().toUpperCase();
+    const data = await body(req); const configured = String(ENV.NOTASTORE_SOCIAL_CODE || '').trim().toUpperCase(); const supplied = String(data.code || '').trim().toUpperCase();
     if (!configured) return json(res, 503, { error: 'La campagna social non è ancora attiva.' });
     if (!supplied || supplied !== configured) return json(res, 400, { error: 'Il codice social non è valido.' });
     const campaign = createHash('sha256').update(configured).digest('hex').slice(0, 16);
@@ -561,7 +569,7 @@ async function api(req, res, url) {
 
   if (req.method === 'POST' && url.pathname === '/api/rewards/random') {
     const level = LEVELS[user.level - 1]; const amount = Math.floor(level.min + Math.random() * (level.max - level.min + 1));
-    if (!user.isDemo && process.env.NOTASTORE_TEST_OUTBOX !== 'true') return json(res, 403, { error: 'Funzione disponibile soltanto per l’account demo.' });
+    if (!user.isDemo && ENV.NOTASTORE_TEST_OUTBOX !== 'true') return json(res, 403, { error: 'Funzione disponibile soltanto per l’account demo.' });
     const issued = await createReward(user, 'RANDOM_CREDIT', amount, user.level); await persist(); return json(res, 201, { reward: issued.reward, message: 'Email simulata generata nella posta NotAStore.' });
   }
 
@@ -589,7 +597,7 @@ async function verifyEmail(res, token) {
     res.writeHead(302, { ...securityHeaders(), Location: '/#/account/ricompense?verified=invalid' }); return res.end();
   }
   verification.usedAt = new Date().toISOString(); user.emailVerifiedAt = verification.usedAt;
-  if (String(user.email).toLowerCase() === String(process.env.NOTASTORE_ADMIN_EMAIL || '').trim().toLowerCase()) user.role = 'admin';
+  if (String(user.email).toLowerCase() === String(ENV.NOTASTORE_ADMIN_EMAIL || '').trim().toLowerCase()) user.role = 'admin';
   await persist();
   res.writeHead(302, { ...securityHeaders(), Location: '/#/account/ricompense?verified=success' }); return res.end();
 }
@@ -597,6 +605,11 @@ async function verifyEmail(res, token) {
 const MIME = { '.html': 'text/html; charset=utf-8', '.js': 'text/javascript; charset=utf-8', '.css': 'text/css; charset=utf-8', '.png': 'image/png', '.jpg': 'image/jpeg', '.jpeg': 'image/jpeg', '.webp': 'image/webp', '.avif': 'image/avif', '.svg': 'image/svg+xml', '.xml': 'application/xml; charset=utf-8', '.txt': 'text/plain; charset=utf-8', '.webmanifest': 'application/manifest+json; charset=utf-8', '.json': 'application/json; charset=utf-8', '.ico': 'image/x-icon' };
 const PUBLIC_PAGE = /^\/(?:prodotti|offerte|come-funziona|chi-siamo|privacy|termini|prodotto\/[^/]+)\/?$/;
 async function staticFile(req, res, url) {
+  const { stat } = await import('node:fs/promises');
+  const { createReadStream } = await import('node:fs');
+  const { extname, join, normalize, resolve } = await import('node:path');
+  const { fileURLToPath } = await import('node:url');
+  const ROOT = fileURLToPath(ROOT_URL);
   const rel = decodeURIComponent(url.pathname === '/' ? '/index.html' : url.pathname);
   const path = resolve(ROOT, `.${normalize(rel)}`);
   if (!path.startsWith(resolve(ROOT))) return json(res, 403, { error: 'Accesso negato' });
@@ -614,9 +627,8 @@ async function staticFile(req, res, url) {
   }
 }
 
-await loadDb();
 function scheduleCredits() {
-  const minutes = Math.max(1, Number(process.env.NOTASTORE_CREDIT_INTERVAL_MINUTES || 180));
+  const minutes = Math.max(1, Number(ENV.NOTASTORE_CREDIT_INTERVAL_MINUTES || 180));
   const delay = minutes * 60_000 * (0.7 + Math.random() * 0.6);
   const timer = setTimeout(async () => {
     for (const user of db.users) {
@@ -629,18 +641,71 @@ function scheduleCredits() {
   }, delay);
   timer.unref();
 }
-if (process.env.NOTASTORE_ENABLE_SCHEDULED_CREDITS === 'true') scheduleCredits();
-const server = http.createServer(async (req, res) => {
+async function routeRequest(req, res) {
   try {
     const url = new URL(req.url, `http://${req.headers.host || 'localhost'}`);
-    if (req.method === 'GET' && url.pathname === '/healthz') return json(res, 200, { ok: true, service: 'notastore', storage: USE_SUPABASE ? 'supabase' : 'local', email: process.env.RESEND_API_KEY ? 'resend' : 'not-configured' });
+    if (req.method === 'GET' && url.pathname === '/healthz') return json(res, 200, { ok: true, service: 'notastore', storage: USE_SUPABASE ? 'supabase' : 'local', email: ENV.RESEND_API_KEY ? 'resend' : 'not-configured' });
     if (url.pathname.startsWith('/api/')) return await api(req, res, url);
     if (req.method === 'GET' && url.pathname.startsWith('/claim/')) return await claim(res, url.pathname.split('/').pop());
     if (req.method === 'GET' && url.pathname.startsWith('/verify/')) return await verifyEmail(res, url.pathname.split('/').pop());
     if (req.method !== 'GET' && req.method !== 'HEAD') return json(res, 405, { error: 'Metodo non consentito' });
     return await staticFile(req, res, url);
   } catch (error) { console.error(error); return json(res, 500, { error: 'Errore interno NotAStore.' }); }
-});
-server.listen(PORT, () => console.log(`NotAStore disponibile su http://localhost:${PORT}`));
+}
 
-export { server, LEVELS };
+class EdgeRequestAdapter {
+  constructor(request, pathname) {
+    this.method = request.method;
+    this.url = `${pathname}${new URL(request.url).search}`;
+    this.headers = Object.fromEntries(request.headers.entries());
+    this.socket = { remoteAddress: request.headers.get('cf-connecting-ip') || request.headers.get('x-forwarded-for') || 'edge' };
+    this.request = request;
+  }
+  async *[Symbol.asyncIterator]() {
+    if (this.method === 'GET' || this.method === 'HEAD') return;
+    const bytes = Buffer.from(await this.request.arrayBuffer());
+    if (bytes.length) yield bytes;
+  }
+}
+
+class EdgeResponseAdapter {
+  constructor() { this.status = 200; this.headers = new Headers(); this.payload = null; }
+  writeHead(status, headers = {}) {
+    this.status = status;
+    for (const [key, value] of Object.entries(headers)) this.headers.set(key, String(value));
+  }
+  end(payload = null) { this.payload = payload; }
+  toResponse() {
+    const location = this.headers.get('Location');
+    if (location?.startsWith('/')) this.headers.set('Location', `${String(ENV.PUBLIC_BASE_URL || '').replace(/\/$/, '')}${location}`);
+    return new Response(this.payload, { status: this.status, headers: this.headers });
+  }
+}
+
+let edgeQueue = Promise.resolve();
+export function handleEdgeRequest(request) {
+  const run = async () => {
+    await loadDb();
+    const incoming = new URL(request.url);
+    const marker = '/functions/v1/notastore';
+    const pathname = incoming.pathname.startsWith(marker) ? incoming.pathname.slice(marker.length) || '/' : incoming.pathname;
+    const req = new EdgeRequestAdapter(request, pathname);
+    const res = new EdgeResponseAdapter();
+    await routeRequest(req, res);
+    return res.toResponse();
+  };
+  const result = edgeQueue.then(run, run);
+  edgeQueue = result.then(() => undefined, () => undefined);
+  return result;
+}
+
+let server = null;
+if (!IS_EDGE) {
+  await loadDb();
+  if (ENV.NOTASTORE_ENABLE_SCHEDULED_CREDITS === 'true') scheduleCredits();
+  const http = await import('node:http');
+  server = http.default.createServer(routeRequest);
+  server.listen(PORT, () => console.log(`NotAStore disponibile su http://localhost:${PORT}`));
+}
+
+export { server, LEVELS, routeRequest };

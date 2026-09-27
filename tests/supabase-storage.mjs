@@ -19,7 +19,7 @@ process.env.SUPABASE_URL = 'http://127.0.0.1:8134';
 process.env.SUPABASE_SERVICE_ROLE_KEY = 'test-service-role-key';
 process.env.NOTASTORE_TEST_OUTBOX = 'true';
 
-const { server } = await import('../server.js');
+const { server, handleEdgeRequest } = await import('../server.js');
 
 try {
   const response = await fetch('http://127.0.0.1:8135/api/auth/register', {
@@ -29,8 +29,15 @@ try {
   });
   if (!response.ok) throw new Error(`Registrazione fallita: ${response.status}`);
   if (!remoteState?.users?.some((user) => user.email === 'supabase@test.local')) throw new Error('Utente non persistito nello stato Supabase');
+  const edgeResponse = await handleEdgeRequest(new Request('https://project.supabase.co/functions/v1/notastore/api/auth/register', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'x-forwarded-for': '127.0.0.2' },
+    body: JSON.stringify({ name: 'Edge Test', username: 'edgetest', email: 'edge@test.local', password: 'TestPass123!' }),
+  }));
+  if (edgeResponse.status !== 201 || !edgeResponse.headers.get('set-cookie')?.includes('__Host-nas_session=')) throw new Error('Adapter Edge Function non operativo');
+  if (!remoteState?.users?.some((user) => user.email === 'edge@test.local')) throw new Error('Utente Edge non persistito nello stato Supabase');
   if (writes < 2) throw new Error('Inizializzazione o aggiornamento Supabase mancante');
-  console.log('Test persistenza Supabase completato: inizializzazione → registrazione → salvataggio remoto.');
+  console.log('Test Supabase completato: persistenza Node + adapter Edge Function.');
 } finally {
   await new Promise((resolve) => server.close(resolve));
   await new Promise((resolve) => mock.close(resolve));

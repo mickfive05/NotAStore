@@ -1,0 +1,4 @@
+project_id = "notastore"
+
+[functions.notastore]
+verify_jwt = false
