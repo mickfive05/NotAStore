@@ -398,6 +398,8 @@ async function api(req, res, url) {
     const data = await body(req); const email = String(data.email || '').trim().toLowerCase();
     const found = db.users.find((u) => u.email === email);
     if (!found || !checkPassword(String(data.password || ''), found.passwordHash)) return json(res, 401, { error: 'Credenziali non valide.' });
+    const adminEmail = String(ENV.NOTASTORE_ADMIN_EMAIL || '').trim().toLowerCase();
+    if (adminEmail && found.email === adminEmail) found.role = 'admin';
     const sid = sessionFor(found); await persist();
     return json(res, 200, bootstrap(found), { 'Set-Cookie': sessionCookie(sid) });
   }

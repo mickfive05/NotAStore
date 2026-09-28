@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="theme-color" content="#f4f3ef">
+  <title>Console amministratore — NotAStore</title>
+  <link rel="icon" href="/images/notastore-mark.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root{--bg:#f4f3ef;--surface:#fff;--ink:#171717;--muted:#68645f;--line:#dedbd4;--brand:#ee651f;--brand-dark:#bd4310;--ok:#18794e;--bad:#b42318;--shadow:0 16px 48px rgba(30,24,18,.08);font-family:Manrope,system-ui,sans-serif;color:var(--ink);background:var(--bg)}
+    *{box-sizing:border-box}body{margin:0;min-height:100svh}button,input,select{font:inherit}button{cursor:pointer}button:disabled{cursor:not-allowed;opacity:.5}
+    :focus-visible{outline:3px solid rgba(238,101,31,.3);outline-offset:2px}.shell{width:min(1180px,calc(100% - 32px));margin:auto;padding:24px 0 64px}
+    header{display:flex;align-items:center;justify-content:space-between;gap:24px;padding:8px 0 36px}header img{width:180px;height:auto;filter:brightness(0) saturate(100%) invert(50%) sepia(96%) saturate(2550%) hue-rotate(352deg) brightness(101%) contrast(92%)}
+    .secure{padding:9px 12px;border:1px solid var(--line);border-radius:999px;background:#fff;color:var(--muted);font-size:12px;font-weight:700}.hero{display:grid;grid-template-columns:1.4fr .6fr;gap:24px;align-items:end;margin-bottom:24px}
+    .eyebrow{color:var(--brand-dark);font-size:12px;font-weight:800;letter-spacing:.12em}.hero h1{max-width:760px;margin:9px 0 10px;font-size:clamp(36px,6vw,72px);letter-spacing:-.06em;line-height:.98}.hero p{max-width:670px;margin:0;color:var(--muted);line-height:1.65}
+    .hero-note{padding:20px;border:1px solid var(--line);border-radius:18px;background:#fff}.hero-note span{display:block;color:var(--muted);font-size:12px}.hero-note strong{display:block;margin-top:9px;font-size:18px}
+    .card{border:1px solid var(--line);border-radius:20px;background:var(--surface);box-shadow:var(--shadow)}.login{width:min(100%,480px);margin:56px auto;padding:28px}.login h2{margin:0 0 8px;font-size:28px}.login p{margin:0 0 24px;color:var(--muted);line-height:1.55}
+    label{display:grid;gap:7px;color:var(--muted);font-size:12px;font-weight:700}input,select{width:100%;min-height:48px;padding:0 14px;border:1px solid var(--line);border-radius:12px;background:#fff;color:var(--ink)}
+    .btn{min-height:48px;padding:0 18px;border:0;border-radius:12px;font-weight:800;transition:background .18s ease,opacity .18s ease}.btn-primary{background:var(--brand);color:#fff}.btn-primary:hover{background:#d85013}.btn-dark{background:#1d1d1b;color:#fff}.btn-soft{border:1px solid var(--line);background:#f7f6f2;color:var(--ink)}
+    .stack{display:grid;gap:14px}.message{min-height:22px;margin-top:14px;font-size:13px;font-weight:700}.message.ok{color:var(--ok)}.message.bad{color:var(--bad)}
+    .lookup{display:grid;grid-template-columns:1fr auto;gap:10px;padding:18px;margin-bottom:18px}.lookup label{grid-column:1/-1}.lookup .btn{min-width:130px}
+    .empty{padding:52px 24px;text-align:center;color:var(--muted)}.user-head{display:flex;align-items:flex-start;justify-content:space-between;gap:24px;padding:24px;border-bottom:1px solid var(--line)}.user-head h2{margin:4px 0 5px;font-size:26px}.user-head p{margin:0;color:var(--muted)}.level-pill{padding:9px 12px;border-radius:999px;background:#fff3eb;color:var(--brand-dark);font-size:12px;font-weight:800;white-space:nowrap}
+    .actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1px;background:var(--line)}.action{display:grid;align-content:start;gap:14px;min-height:260px;padding:24px;background:#fff}.action h3{margin:0;font-size:19px}.action p{min-height:42px;margin:-6px 0 0;color:var(--muted);font-size:13px;line-height:1.55}.fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.action .btn{align-self:end;margin-top:auto}
+    .top-actions{display:flex;gap:8px;align-items:center}.top-actions a{color:var(--muted);font-size:13px}.hidden{display:none!important}
+    @media(max-width:760px){.shell{width:min(100% - 20px,1180px);padding-top:14px}header{padding-bottom:26px}header img{width:145px}.secure{display:none}.hero{grid-template-columns:1fr}.hero h1{font-size:42px}.hero-note{display:none}.lookup{grid-template-columns:1fr}.lookup .btn{width:100%}.actions{grid-template-columns:1fr}.action{min-height:0}.fields{grid-template-columns:1fr}.user-head{flex-direction:column}.top-actions a{display:none}}
+    @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <header><img src="/images/notastore-logo.png" alt="NotAStore" width="360" height="120"><div class="top-actions"><a href="/preview/#/">Apri il sito</a><span class="secure">AREA PRIVATA</span></div></header>
+    <main>
+      <section class="hero"><div><div class="eyebrow">CONSOLE AMMINISTRATORE</div><h1>Gestisci un account dalla sua email.</h1><p>Accrediti immediati, email con link valido 24 ore, saldo, spesa complessiva e livello in un’unica pagina riservata.</p></div><div class="hero-note"><span>Account amministratore</span><strong>michaellupo2005@gmail.com</strong></div></section>
+
+      <section id="loginPanel" class="card login hidden">
+        <h2>Accedi come amministratore</h2><p>Usa la password del tuo account NotAStore. La password non viene salvata in questa pagina.</p>
+        <form id="loginForm" class="stack">
+          <label>Email<input name="email" type="email" value="michaellupo2005@gmail.com" autocomplete="username" readonly></label>
+          <label>Password<input name="password" type="password" autocomplete="current-password" required></label>
+          <button class="btn btn-primary" type="submit">Accedi alla console</button>
+        </form><div id="loginMessage" class="message" role="status" aria-live="polite"></div>
+      </section>
+
+      <section id="consolePanel" class="hidden">
+        <form id="lookupForm" class="card lookup">
+          <label>Email dell’utente<input id="targetEmail" type="email" placeholder="utente@email.it" autocomplete="off" required></label>
+          <button class="btn btn-dark" type="submit">Cerca utente</button>
+        </form>
+        <div id="result" class="card empty">Inserisci l’email esatta usata dall’utente durante la registrazione.</div>
+      </section>
+    </main>
+  </div>
+  <script>
+    const loginPanel=document.querySelector('#loginPanel');const consolePanel=document.querySelector('#consolePanel');const result=document.querySelector('#result');let levels=[];
+    const esc=(value)=>String(value??'').replace(/[&<>'"]/g,(char)=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[char]));
+    const api=async(path,options={})=>{const response=await fetch(path,{credentials:'same-origin',headers:{'Content-Type':'application/json'},...options,body:options.body&&typeof options.body!=='string'?JSON.stringify(options.body):options.body});const data=await response.json().catch(()=>({}));if(!response.ok)throw new Error(data.error||'Operazione non riuscita');return data};
+    const status=(text,type='')=>{let node=document.querySelector('#actionMessage');if(!node)return;node.textContent=text;node.className=`message ${type}`};
+    function showLogin(){loginPanel.classList.remove('hidden');consolePanel.classList.add('hidden')}
+    function showConsole(data){levels=data.levels||[];loginPanel.classList.add('hidden');consolePanel.classList.remove('hidden')}
+    async function boot(){try{const data=await api('/api/bootstrap');if(data.user?.role==='admin')showConsole(data);else showLogin()}catch{showLogin()}}
+    document.querySelector('#loginForm').addEventListener('submit',async(event)=>{event.preventDefault();const button=event.submitter;const message=document.querySelector('#loginMessage');button.disabled=true;message.textContent='Accesso in corso…';message.className='message';try{const data=await api('/api/auth/login',{method:'POST',body:Object.fromEntries(new FormData(event.currentTarget))});if(data.user?.role!=='admin')throw new Error('Questo account non dispone dei permessi amministratore.');message.textContent='';showConsole(data)}catch(error){message.textContent=error.message;message.className='message bad'}finally{button.disabled=false}});
+    document.querySelector('#lookupForm').addEventListener('submit',async(event)=>{event.preventDefault();const button=event.submitter;button.disabled=true;result.className='card empty';result.textContent='Ricerca in corso…';try{const email=document.querySelector('#targetEmail').value.trim().toLowerCase();const data=await api('/api/admin/users');const user=data.users.find(item=>String(item.email).toLowerCase()===email);if(!user){result.textContent='Nessun account trovato con questa email.';return}renderUser(user)}catch(error){result.textContent=error.message}finally{button.disabled=false}});
+    function renderUser(user){const options=levels.map(item=>`<option value="${item.level}" ${Number(item.level)===Number(user.level)?'selected':''}>${item.level} · ${esc(item.name)}</option>`).join('');result.className='card';result.innerHTML=`<div class="user-head"><div><div class="eyebrow">ACCOUNT TROVATO</div><h2>${esc(user.name)}</h2><p>@${esc(user.username)} · ${esc(user.email)}</p></div><span class="level-pill">Livello ${user.level}</span></div><div class="actions">
+      <form class="action" data-action="metrics"><h3>Saldo e spesa</h3><p>Imposta i valori complessivi dell’account.</p><div class="fields"><label>Saldo virtuale €<input name="wallet" type="number" min="0" step="0.01" value="${user.wallet}" required></label><label>Spesa complessiva €<input name="totalSpent" type="number" min="0" step="0.01" value="${user.totalSpent}" required></label></div><button class="btn btn-soft" type="submit">Salva valori</button></form>
+      <form class="action" data-action="level"><h3>Livello</h3><p>Cambia il livello e la carta attiva associata.</p><label>Nuovo livello<select name="level">${options}</select></label><button class="btn btn-dark" type="submit">Aggiorna livello</button></form>
+      <form class="action" data-action="direct"><h3>Accredito immediato</h3><p>Aggiunge subito l’importo al saldo virtuale.</p><label>Importo €<input name="amount" type="number" min="0.01" step="0.01" placeholder="500" required></label><button class="btn btn-dark" type="submit">Accredita ora</button></form>
+      <form class="action" data-action="email"><h3>Accredito via email</h3><p>Invia un link personale, monouso e valido 24 ore.</p><label>Importo €<input name="amount" type="number" min="0.01" step="0.01" placeholder="500" required></label><button class="btn btn-primary" type="submit">Invia email</button></form>
+    </div><div id="actionMessage" class="message" style="padding:0 24px 18px" role="status" aria-live="polite"></div>`;
+      result.querySelectorAll('form[data-action]').forEach(form=>form.addEventListener('submit',event=>runAction(event,user)));
+    }
+    async function runAction(event,user){event.preventDefault();const form=event.currentTarget;const button=event.submitter;const values=Object.fromEntries(new FormData(form));button.disabled=true;status('Operazione in corso…');try{let data;if(form.dataset.action==='metrics')data=await api(`/api/admin/users/${encodeURIComponent(user.id)}/metrics`,{method:'PUT',body:{wallet:Number(values.wallet),totalSpent:Number(values.totalSpent)}});if(form.dataset.action==='level')data=await api(`/api/admin/users/${encodeURIComponent(user.id)}/level`,{method:'PUT',body:{level:Number(values.level)}});if(form.dataset.action==='direct')data=await api('/api/admin/credits/direct',{method:'POST',body:{userId:user.id,amount:Number(values.amount)}});if(form.dataset.action==='email')data=await api('/api/admin/rewards',{method:'POST',body:{userId:user.id,amount:Number(values.amount)}});if(form.dataset.action==='direct')form.reset();if(form.dataset.action==='email')form.reset();status(form.dataset.action==='email'?'Email inviata: il link scade tra 24 ore.':'Modifica salvata correttamente.','ok')}catch(error){status(error.message,'bad')}finally{button.disabled=false}}
+    boot();
+  </script>
+</body>
+</html>

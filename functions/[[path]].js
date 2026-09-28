@@ -1,5 +1,6 @@
 const PROXY_PREFIXES = ['/api/', '/claim/', '/verify/', '/healthz'];
 const PREVIEW_PREFIX = '/preview';
+const ADMIN_PREFIX = '/amministrazione';
 
 function cookieValue(request, name) {
   const cookies = request.headers.get('cookie') || '';
@@ -48,7 +49,7 @@ export async function onRequest(context) {
     });
   }
 
-  if (url.pathname === PREVIEW_PREFIX || url.pathname.startsWith(`${PREVIEW_PREFIX}/`)) {
+  if (url.pathname === PREVIEW_PREFIX || url.pathname.startsWith(`${PREVIEW_PREFIX}/`) || url.pathname === ADMIN_PREFIX || url.pathname.startsWith(`${ADMIN_PREFIX}/`)) {
     const configuredCode = String(context.env.PREVIEW_ACCESS_CODE || '');
     const expectedToken = configuredCode ? await accessToken(configuredCode) : '';
     if (!expectedToken || cookieValue(context.request, 'notastore_preview') !== expectedToken) {
