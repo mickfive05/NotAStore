@@ -11,4 +11,16 @@ await cp(new URL('../css/coming-soon.css', import.meta.url), new URL('css/coming
 await cp(new URL('../images/notastore-logo.png', import.meta.url), new URL('images/notastore-logo.png', output));
 await cp(new URL('../images/notastore-mark.svg', import.meta.url), new URL('images/notastore-mark.svg', output));
 
+await cp(new URL('../accesso.html', import.meta.url), new URL('accesso.html', output));
+
+const preview = new URL('preview/', output);
+await mkdir(preview, { recursive: true });
+await cp(new URL('../index.html', import.meta.url), new URL('index.html', preview));
+for (const directory of ['css', 'data', 'images', 'js']) {
+  await cp(new URL(`../${directory}/`, import.meta.url), new URL(`${directory}/`, preview), { recursive: true });
+}
+for (const file of ['manifest.webmanifest', 'robots.txt', 'sitemap.xml']) {
+  await cp(new URL(`../${file}`, import.meta.url), new URL(file, preview));
+}
+
 console.log('Build Cloudflare Pages pronto in dist/');
