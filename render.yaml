@@ -1,5 +1,16 @@
 services:
   - type: web
+    name: notastore-apex
+    runtime: static
+    buildCommand: echo "Redirect NotAStore pronto"
+    staticPublishPath: ./redirect
+    routes:
+      - type: redirect
+        source: /*
+        destination: https://www.notastore.shop
+    autoDeploy: true
+
+  - type: web
     name: notastore
     runtime: node
     plan: free
@@ -14,7 +25,7 @@ services:
       - key: NODE_VERSION
         value: "22"
       - key: PUBLIC_BASE_URL
-        value: https://notastore.shop
+        value: https://www.notastore.shop
       - key: NOTASTORE_ENABLE_SCHEDULED_CREDITS
         value: "false"
       - key: SUPABASE_URL
