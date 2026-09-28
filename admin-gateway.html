@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="theme-color" content="#f7f7f4">
+  <title>Accesso amministratore — NotAStore</title>
+  <link rel="icon" href="/images/notastore-mark.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root{font-family:Manrope,system-ui,sans-serif;color:#171717;background:#f7f7f4}*{box-sizing:border-box}body{margin:0;min-height:100svh;display:grid;place-items:center;padding:24px}.shell{width:min(100%,760px);text-align:center}.logo{width:min(270px,76vw);height:auto;filter:brightness(0) saturate(100%) invert(50%) sepia(96%) saturate(2550%) hue-rotate(352deg) brightness(101%) contrast(92%)}h1{margin:28px 0 9px;font-size:clamp(34px,7vw,58px);letter-spacing:-.055em;line-height:1}p{margin:0 auto 28px;max-width:560px;color:#68645f;line-height:1.6}.card{border:1px solid #dedbd4;border-radius:20px;background:#fff;box-shadow:0 18px 56px rgba(30,24,18,.08)}form{width:min(100%,440px);margin:0 auto;padding:24px;display:grid;gap:12px;text-align:left}label{display:grid;gap:7px;color:#68645f;font-size:12px;font-weight:700}input,button,a.choice{min-height:52px;border-radius:13px;font:inherit}input{width:100%;padding:0 15px;border:1px solid #d8d4cd;background:#fff;font-size:16px}button{border:0;background:#ee651f;color:#fff;font-weight:800;cursor:pointer}button:disabled{cursor:not-allowed;opacity:.5}:focus-visible{outline:3px solid rgba(238,101,31,.3);outline-offset:2px}.error{min-height:20px;color:#b42318;font-size:13px;text-align:center}.choices{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-top:30px}.choice{display:grid;place-items:center;padding:28px 18px;border:1px solid #dedbd4;background:#fff;color:#171717;text-decoration:none;box-shadow:0 15px 45px rgba(30,24,18,.07);transition:border-color .18s ease,transform .18s ease}.choice:hover{border-color:#ee651f;transform:translateY(-2px)}.choice strong{font-size:20px}.choice span{margin-top:7px;color:#68645f;font-size:13px}.hidden{display:none!important}@media(max-width:620px){.choices{grid-template-columns:1fr}.choice{min-height:118px}}@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <img class="logo" src="/images/notastore-logo.png" alt="NotAStore" width="360" height="120">
+    <section id="loginView">
+      <h1>Accesso amministratore</h1><p>Inserisci la password riservata per aprire il sito completo o la console di gestione.</p>
+      <form class="card" action="/api/preview-login" method="post">
+        <input type="hidden" name="next" value="/admin">
+        <label>Password<input name="code" type="password" autocomplete="current-password" required autofocus></label>
+        <button type="submit">Entra</button><div id="error" class="error" role="alert"></div>
+      </form>
+    </section>
+    <section id="choiceView" class="hidden">
+      <h1>Dove vuoi entrare?</h1><p>L’accesso rimane valido su questo dispositivo per 30 giorni.</p>
+      <div class="choices"><a class="choice" href="/preview/#/"><strong>Entra nel sito</strong><span>Apri la versione completa di NotAStore</span></a><a class="choice" href="/amministrazione/"><strong>Console admin</strong><span>Gestisci utenti, livelli e accrediti</span></a></div>
+    </section>
+  </main>
+  <script>
+    const params=new URLSearchParams(location.search);if(params.has('errore'))document.querySelector('#error').textContent='Password non corretta.';
+    fetch('/api/private-status',{credentials:'same-origin'}).then(response=>response.json()).then(data=>{if(data.authenticated){document.querySelector('#loginView').classList.add('hidden');document.querySelector('#choiceView').classList.remove('hidden')}}).catch(()=>{});
+  </script>
+</body>
+</html>

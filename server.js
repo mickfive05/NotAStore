@@ -349,6 +349,9 @@ function limited(req) {
 async function api(req, res, url) {
   if (limited(req)) return json(res, 429, { error: 'Troppe richieste. Riprova tra poco.' });
   const user = currentUser(req);
+  const suppliedAdminKey = String(req.headers['x-notastore-admin-key'] || '');
+  const configuredAdminKey = String(ENV.NOTASTORE_ADMIN_KEY || '');
+  const adminByKey = Boolean(suppliedAdminKey && configuredAdminKey && createHash('sha256').update(suppliedAdminKey).digest('hex') === createHash('sha256').update(configuredAdminKey).digest('hex'));
   if (req.method === 'POST' && url.pathname === '/api/translate') {
     const data = await body(req);
     const texts = Array.isArray(data.texts) ? data.texts.map((value) => String(value || '').trim()).filter(Boolean).slice(0, 40) : [];
@@ -409,7 +412,7 @@ async function api(req, res, url) {
     return json(res, 200, { ok: true }, { 'Set-Cookie': sessionCookie('', 0) });
   }
 
-  if (!user) return json(res, 401, { error: 'Accedi per continuare.' });
+  if (!user && !(adminByKey && url.pathname.startsWith('/api/admin/'))) return json(res, 401, { error: 'Accedi per continuare.' });
 
   if (req.method === 'POST' && url.pathname === '/api/auth/resend-verification') {
     if (user.emailVerifiedAt) return json(res, 409, { error: 'Questa email è già verificata.' });
@@ -466,9 +469,9 @@ async function api(req, res, url) {
   }
 
   if (url.pathname.startsWith('/api/admin/')) {
-    if (user.role !== 'admin') return json(res, 403, { error: 'Accesso riservato agli amministratori.' });
+    if (!adminByKey && user?.role !== 'admin') return json(res, 403, { error: 'Accesso riservato agli amministratori.' });
     if (req.method === 'GET' && url.pathname === '/api/admin/users') {
-      return json(res, 200, { users: db.users.map((entry) => ({ id: entry.id, name: entry.name, username: entry.username, email: entry.email, level: entry.level, wallet: entry.wallet, totalSpent: entry.totalSpent, isDemo: Boolean(entry.isDemo), role: entry.role || 'user', createdAt: entry.createdAt })) });
+      return json(res, 200, { levels: LEVELS, users: db.users.map((entry) => ({ id: entry.id, name: entry.name, username: entry.username, email: entry.email, level: entry.level, wallet: entry.wallet, totalSpent: entry.totalSpent, isDemo: Boolean(entry.isDemo), role: entry.role || 'user', createdAt: entry.createdAt })) });
     }
     if (req.method === 'POST' && url.pathname === '/api/admin/rewards') {
       const data = await body(req);

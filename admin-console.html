@@ -36,16 +36,7 @@
     <main>
       <section class="hero"><div><div class="eyebrow">CONSOLE AMMINISTRATORE</div><h1>Gestisci un account dalla sua email.</h1><p>Accrediti immediati, email con link valido 24 ore, saldo, spesa complessiva e livello in un’unica pagina riservata.</p></div><div class="hero-note"><span>Account amministratore</span><strong>michaellupo2005@gmail.com</strong></div></section>
 
-      <section id="loginPanel" class="card login hidden">
-        <h2>Accedi come amministratore</h2><p>Usa la password del tuo account NotAStore. La password non viene salvata in questa pagina.</p>
-        <form id="loginForm" class="stack">
-          <label>Email<input name="email" type="email" value="michaellupo2005@gmail.com" autocomplete="username" readonly></label>
-          <label>Password<input name="password" type="password" autocomplete="current-password" required></label>
-          <button class="btn btn-primary" type="submit">Accedi alla console</button>
-        </form><div id="loginMessage" class="message" role="status" aria-live="polite"></div>
-      </section>
-
-      <section id="consolePanel" class="hidden">
+      <section id="consolePanel">
         <form id="lookupForm" class="card lookup">
           <label>Email dell’utente<input id="targetEmail" type="email" placeholder="utente@email.it" autocomplete="off" required></label>
           <button class="btn btn-dark" type="submit">Cerca utente</button>
@@ -55,14 +46,11 @@
     </main>
   </div>
   <script>
-    const loginPanel=document.querySelector('#loginPanel');const consolePanel=document.querySelector('#consolePanel');const result=document.querySelector('#result');let levels=[];
+    const result=document.querySelector('#result');let levels=[];
     const esc=(value)=>String(value??'').replace(/[&<>'"]/g,(char)=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[char]));
     const api=async(path,options={})=>{const response=await fetch(path,{credentials:'same-origin',headers:{'Content-Type':'application/json'},...options,body:options.body&&typeof options.body!=='string'?JSON.stringify(options.body):options.body});const data=await response.json().catch(()=>({}));if(!response.ok)throw new Error(data.error||'Operazione non riuscita');return data};
     const status=(text,type='')=>{let node=document.querySelector('#actionMessage');if(!node)return;node.textContent=text;node.className=`message ${type}`};
-    function showLogin(){loginPanel.classList.remove('hidden');consolePanel.classList.add('hidden')}
-    function showConsole(data){levels=data.levels||[];loginPanel.classList.add('hidden');consolePanel.classList.remove('hidden')}
-    async function boot(){try{const data=await api('/api/bootstrap');if(data.user?.role==='admin')showConsole(data);else showLogin()}catch{showLogin()}}
-    document.querySelector('#loginForm').addEventListener('submit',async(event)=>{event.preventDefault();const button=event.submitter;const message=document.querySelector('#loginMessage');button.disabled=true;message.textContent='Accesso in corso…';message.className='message';try{const data=await api('/api/auth/login',{method:'POST',body:Object.fromEntries(new FormData(event.currentTarget))});if(data.user?.role!=='admin')throw new Error('Questo account non dispone dei permessi amministratore.');message.textContent='';showConsole(data)}catch(error){message.textContent=error.message;message.className='message bad'}finally{button.disabled=false}});
+    async function boot(){try{const data=await api('/api/admin/users');levels=data.levels||[]}catch(error){result.textContent=error.message}}
     document.querySelector('#lookupForm').addEventListener('submit',async(event)=>{event.preventDefault();const button=event.submitter;button.disabled=true;result.className='card empty';result.textContent='Ricerca in corso…';try{const email=document.querySelector('#targetEmail').value.trim().toLowerCase();const data=await api('/api/admin/users');const user=data.users.find(item=>String(item.email).toLowerCase()===email);if(!user){result.textContent='Nessun account trovato con questa email.';return}renderUser(user)}catch(error){result.textContent=error.message}finally{button.disabled=false}});
     function renderUser(user){const options=levels.map(item=>`<option value="${item.level}" ${Number(item.level)===Number(user.level)?'selected':''}>${item.level} · ${esc(item.name)}</option>`).join('');result.className='card';result.innerHTML=`<div class="user-head"><div><div class="eyebrow">ACCOUNT TROVATO</div><h2>${esc(user.name)}</h2><p>@${esc(user.username)} · ${esc(user.email)}</p></div><span class="level-pill">Livello ${user.level}</span></div><div class="actions">
       <form class="action" data-action="metrics"><h3>Saldo e spesa</h3><p>Imposta i valori complessivi dell’account.</p><div class="fields"><label>Saldo virtuale €<input name="wallet" type="number" min="0" step="0.01" value="${user.wallet}" required></label><label>Spesa complessiva €<input name="totalSpent" type="number" min="0" step="0.01" value="${user.totalSpent}" required></label></div><button class="btn btn-soft" type="submit">Salva valori</button></form>

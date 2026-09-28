@@ -12,6 +12,8 @@ await cp(new URL('../images/notastore-logo.png', import.meta.url), new URL('imag
 await cp(new URL('../images/notastore-mark.svg', import.meta.url), new URL('images/notastore-mark.svg', output));
 
 await cp(new URL('../accesso.html', import.meta.url), new URL('accesso.html', output));
+await mkdir(new URL('admin/', output), { recursive: true });
+await cp(new URL('../admin-gateway.html', import.meta.url), new URL('admin/index.html', output));
 await mkdir(new URL('amministrazione/', output), { recursive: true });
 await cp(new URL('../admin-console.html', import.meta.url), new URL('amministrazione/index.html', output));
 

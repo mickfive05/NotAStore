@@ -17,6 +17,12 @@ async function accessToken(secret) {
   return Array.from(new Uint8Array(digest), (byte) => byte.toString(16).padStart(2, '0')).join('');
 }
 
+async function hasPrivateAccess(context) {
+  const configuredCode = String(context.env.PREVIEW_ACCESS_CODE || '');
+  const expectedToken = configuredCode ? await accessToken(configuredCode) : '';
+  return Boolean(expectedToken && cookieValue(context.request, 'notastore_preview') === expectedToken);
+}
+
 export async function onRequest(context) {
   const url = new URL(context.request.url);
 
@@ -24,18 +30,23 @@ export async function onRequest(context) {
     const configuredCode = String(context.env.PREVIEW_ACCESS_CODE || '');
     const form = await context.request.formData();
     const submittedCode = String(form.get('code') || '');
+    const returnTo = String(form.get('next') || '') === '/admin' ? '/admin' : '/preview/#/';
     if (!configuredCode || submittedCode !== configuredCode) {
-      return Response.redirect(`${url.origin}/accesso.html?errore=1`, 303);
+      return Response.redirect(`${url.origin}${returnTo === '/admin' ? '/admin?errore=1' : '/accesso.html?errore=1'}`, 303);
     }
     const token = await accessToken(configuredCode);
     return new Response(null, {
       status: 303,
       headers: {
-        location: `${url.origin}/preview/#/`,
+        location: `${url.origin}${returnTo}`,
         'set-cookie': `notastore_preview=${token}; Path=/; Max-Age=2592000; HttpOnly; Secure; SameSite=Strict`,
         'cache-control': 'no-store',
       },
     });
+  }
+
+  if (url.pathname === '/api/private-status') {
+    return Response.json({ authenticated: await hasPrivateAccess(context) }, { headers: { 'cache-control': 'no-store' } });
   }
 
   if (url.pathname === '/api/preview-logout') {
@@ -50,10 +61,8 @@ export async function onRequest(context) {
   }
 
   if (url.pathname === PREVIEW_PREFIX || url.pathname.startsWith(`${PREVIEW_PREFIX}/`) || url.pathname === ADMIN_PREFIX || url.pathname.startsWith(`${ADMIN_PREFIX}/`)) {
-    const configuredCode = String(context.env.PREVIEW_ACCESS_CODE || '');
-    const expectedToken = configuredCode ? await accessToken(configuredCode) : '';
-    if (!expectedToken || cookieValue(context.request, 'notastore_preview') !== expectedToken) {
-      return Response.redirect(`${url.origin}/accesso.html`, 302);
+    if (!(await hasPrivateAccess(context))) {
+      return Response.redirect(`${url.origin}/admin`, 302);
     }
   }
 
@@ -68,6 +77,10 @@ export async function onRequest(context) {
   const headers = new Headers(context.request.headers);
   const key = String(context.env.SUPABASE_PUBLISHABLE_KEY || '');
   if (key) headers.set('apikey', key);
+  if (url.pathname.startsWith('/api/admin/')) {
+    if (!(await hasPrivateAccess(context))) return Response.json({ error: 'Accesso amministratore non valido.' }, { status: 401 });
+    headers.set('x-notastore-admin-key', String(context.env.PREVIEW_ACCESS_CODE || ''));
+  }
   headers.delete('host');
 
   const response = await fetch(target, {
