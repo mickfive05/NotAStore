@@ -35,14 +35,23 @@ export async function onRequest(context) {
       return Response.redirect(`${url.origin}${returnTo === '/admin' ? '/admin?errore=1' : '/accesso.html?errore=1'}`, 303);
     }
     const token = await accessToken(configuredCode);
-    return new Response(null, {
-      status: 303,
-      headers: {
-        location: `${url.origin}${returnTo}`,
-        'set-cookie': `notastore_preview=${token}; Path=/; Max-Age=2592000; HttpOnly; Secure; SameSite=Strict`,
-        'cache-control': 'no-store',
-      },
+    const base = String(context.env.SUPABASE_FUNCTION_URL || '').replace(/\/$/, '');
+    const key = String(context.env.SUPABASE_PUBLISHABLE_KEY || '');
+    if (!base) return Response.json({ error: 'Backend Supabase non configurato.' }, { status: 503 });
+    const sessionResponse = await fetch(`${base}/api/admin/session`, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json', 'x-notastore-admin-key': configuredCode, ...(key ? { apikey: key } : {}) },
+      body: '{}',
     });
+    if (!sessionResponse.ok) {
+      const detail = await sessionResponse.json().catch(() => ({}));
+      return Response.json({ error: detail.error || 'Sessione amministratore non disponibile.' }, { status: sessionResponse.status });
+    }
+    const responseHeaders = new Headers({ location: `${url.origin}${returnTo}`, 'cache-control': 'no-store' });
+    responseHeaders.append('set-cookie', `notastore_preview=${token}; Path=/; Max-Age=2592000; HttpOnly; Secure; SameSite=Strict`);
+    const accountCookie = sessionResponse.headers.get('set-cookie');
+    if (accountCookie) responseHeaders.append('set-cookie', accountCookie);
+    return new Response(null, { status: 303, headers: responseHeaders });
   }
 
   if (url.pathname === '/api/private-status') {

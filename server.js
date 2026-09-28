@@ -470,6 +470,15 @@ async function api(req, res, url) {
 
   if (url.pathname.startsWith('/api/admin/')) {
     if (!adminByKey && user?.role !== 'admin') return json(res, 403, { error: 'Accesso riservato agli amministratori.' });
+    if (req.method === 'POST' && url.pathname === '/api/admin/session') {
+      const adminEmail = String(ENV.NOTASTORE_ADMIN_EMAIL || '').trim().toLowerCase();
+      const target = db.users.find((entry) => String(entry.email || '').trim().toLowerCase() === adminEmail);
+      if (!target) return json(res, 404, { error: 'Account amministratore non trovato.' });
+      target.role = 'admin';
+      const sid = sessionFor(target);
+      await persist();
+      return json(res, 200, bootstrap(target), { 'Set-Cookie': sessionCookie(sid) });
+    }
     if (req.method === 'GET' && url.pathname === '/api/admin/users') {
       return json(res, 200, { levels: LEVELS, users: db.users.map((entry) => ({ id: entry.id, name: entry.name, username: entry.username, email: entry.email, level: entry.level, wallet: entry.wallet, totalSpent: entry.totalSpent, isDemo: Boolean(entry.isDemo), role: entry.role || 'user', createdAt: entry.createdAt })) });
     }
