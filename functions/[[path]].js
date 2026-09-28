@@ -30,7 +30,7 @@ export async function onRequest(context) {
     return new Response(null, {
       status: 303,
       headers: {
-        location: `${url.origin}/preview/`,
+        location: `${url.origin}/preview/#/`,
         'set-cookie': `notastore_preview=${token}; Path=/; Max-Age=2592000; HttpOnly; Secure; SameSite=Strict`,
         'cache-control': 'no-store',
       },

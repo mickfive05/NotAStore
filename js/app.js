@@ -564,6 +564,6 @@ function refreshPicks(el) {
 /* ---------------- Avvio ---------------- */
 await store.init();
 currentRoute = parseHash();
-if (!location.hash && location.pathname === '/') location.hash = '#/';
+if (!location.hash && ['/', '/preview', '/preview/'].includes(location.pathname)) location.hash = '#/';
 render();
 

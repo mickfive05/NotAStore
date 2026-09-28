@@ -37,6 +37,6 @@ services:
       - key: EMAIL_FROM
         value: NotAStore Accrediti <accrediti@notastore.shop>
       - key: NOTASTORE_ADMIN_EMAIL
-        value: info@notastore.shop
+        value: michaellupo2005@gmail.com
       - key: NOTASTORE_SOCIAL_CODE
         sync: false
