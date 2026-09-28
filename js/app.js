@@ -1,7 +1,7 @@
 import { header as headerHTML, footer as footerHTML, toast, card, esc, Ico, imgSrc, activeCardVisual } from './ui.js?v=20260926searchwide';
-import { store } from './store.js?v=20260922c';
+import { store } from './store.js?v=20260928adminfix';
 import { CATALOG as PRODUCTS, CARDS, byId, defaultVariants, variantPrice, variantListPrice, variantTitle, variantImage, variantSpecs, eur } from './data.js?v=20260922c';
-import * as V from './views.js?v=20260925cardnames';
+import * as V from './views.js?v=20260928adminfix';
 import { currentLocale, localizeDocument, setLanguage, startLocalizationObserver, translateText } from './i18n.js?v=20260925translate';
 
 const app = document.getElementById('app');
