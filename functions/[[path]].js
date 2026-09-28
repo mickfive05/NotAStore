@@ -58,7 +58,20 @@ export async function onRequest(context) {
   }
 
   if (url.pathname === '/api/private-status') {
-    return Response.json({ authenticated: await hasPrivateAccess(context) }, { headers: { 'cache-control': 'no-store' } });
+    const authenticated = await hasPrivateAccess(context);
+    const responseHeaders = new Headers({ 'cache-control': 'no-store', 'content-type': 'application/json; charset=utf-8' });
+    if (authenticated) {
+      const base = String(context.env.SUPABASE_FUNCTION_URL || '').replace(/\/$/, '');
+      const key = String(context.env.SUPABASE_PUBLISHABLE_KEY || '');
+      const configuredCode = String(context.env.PREVIEW_ACCESS_CODE || '');
+      if (base && configuredCode) {
+        const sessionResponse = await fetch(`${base}/api/admin/session`, { method: 'POST', headers: { 'content-type': 'application/json', 'x-notastore-admin-key': configuredCode, ...(key ? { apikey: key } : {}) }, body: '{}' });
+        const rawCookies = typeof sessionResponse.headers.getSetCookie === 'function' ? sessionResponse.headers.getSetCookie().join(', ') : String(sessionResponse.headers.get('set-cookie') || '');
+        const accountCookie = rawCookies.match(/__Host-nas_session=[^,]+?;\s*Secure(?=,|$)/i)?.[0] || '';
+        if (accountCookie) responseHeaders.append('set-cookie', accountCookie);
+      }
+    }
+    return new Response(JSON.stringify({ authenticated }), { status: 200, headers: responseHeaders });
   }
 
   if (url.pathname === '/api/preview-logout') {
