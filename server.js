@@ -482,6 +482,16 @@ async function api(req, res, url) {
         return json(res, 201, { ok: true, delivery: issued.delivery, expiresAt: issued.reward.expiresAt });
       } catch (error) { await persist(); return json(res, 503, { error: error.message }); }
     }
+    if (req.method === 'POST' && url.pathname === '/api/admin/credits/direct') {
+      const data = await body(req);
+      const target = db.users.find((entry) => entry.id === data.userId);
+      const amount = Math.round(Number(data.amount) * 100) / 100;
+      if (!target) return json(res, 404, { error: 'Utente non trovato.' });
+      if (!Number.isFinite(amount) || amount <= 0 || amount > 1_000_000_000_000) return json(res, 400, { error: 'Inserisci un importo valido.' });
+      transaction(target, 'ADMIN_CREDIT', amount, { source: 'admin-direct' });
+      await persist();
+      return json(res, 201, { ok: true, wallet: target.wallet, amount });
+    }
     const levelMatch = url.pathname.match(/^\/api\/admin\/users\/([^/]+)\/level$/);
     if (req.method === 'PUT' && levelMatch) {
       const target = db.users.find((entry) => entry.id === decodeURIComponent(levelMatch[1]));

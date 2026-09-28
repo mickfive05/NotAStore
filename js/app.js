@@ -456,6 +456,14 @@ document.addEventListener('click', async (e) => {
       finally { el.disabled = false; }
       break;
     }
+    case 'admin-direct-credit': {
+      e.preventDefault(); const row = el.closest('[data-admin-user]'); const amount = Number(row?.querySelector('[data-admin-direct-amount]')?.value || 0);
+      el.disabled = true;
+      try { const result = await store.adminDirectCredit(id, amount); row.querySelector('[data-admin-wallet]').value = result.wallet; row.querySelector('[data-admin-direct-amount]').value = ''; toast('Accredito completato', `${eur(result.amount)} aggiunti subito al saldo`, 'ok'); }
+      catch (error) { toast('Accredito non riuscito', error.message, 'warn'); }
+      finally { el.disabled = false; }
+      break;
+    }
     case 'admin-level': {
       e.preventDefault(); const row = el.closest('[data-admin-user]'); const level = Number(row?.querySelector('[data-admin-level]')?.value);
       el.disabled = true;

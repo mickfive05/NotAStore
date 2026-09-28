@@ -64,6 +64,7 @@ export const store = {
   async leaderboard() { return request('/api/leaderboard'); },
   async adminUsers() { return request('/api/admin/users'); },
   async adminCredit(userId, amount) { return request('/api/admin/rewards', { method: 'POST', body: { userId, amount } }); },
+  async adminDirectCredit(userId, amount) { return request('/api/admin/credits/direct', { method: 'POST', body: { userId, amount } }); },
   async adminSetLevel(userId, level) { const data = await request(`/api/admin/users/${encodeURIComponent(userId)}/level`, { method: 'PUT', body: { level } }); if (this.user?.id === userId) await this.refresh(); return data; },
   async adminSetMetrics(userId, wallet, totalSpent) { const data = await request(`/api/admin/users/${encodeURIComponent(userId)}/metrics`, { method: 'PUT', body: { wallet, totalSpent } }); if (this.user?.id === userId) await this.refresh(); return data; },
   async unlockCard(level) { const data = await request('/api/cards/unlock', { method: 'POST', body: { level } }); this.apply(data.bootstrap); return data; },

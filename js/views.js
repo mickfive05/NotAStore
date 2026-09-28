@@ -953,7 +953,7 @@ export function dashboard() {
 }
 
 const accountNav = (active) => `<aside class="acct-side"><div class="who"><span class="avatar">${esc((store.user?.name || 'N A').split(/\s+/).map((x) => x[0]).join('').slice(0,2).toUpperCase())}</span><div><strong style="font-size:15px">${esc(store.user?.name || 'NotAStore')}</strong><div style="font-size:12.5px;color:var(--ink-3)">@${esc(store.user?.username || '')}</div></div></div>${[
-  ['account','Il mio account','#/account','user'],['rewards','Ricompense','#/account/ricompense','spark'],['dashboard','Dashboard','#/account/dashboard','chart'],['cards','Le mie carte','#/account/carte','card'],['moves','Movimenti','#/account/movimenti','ret'],['orders','I miei ordini','#/ordini','box'],['wishlist','Wishlist','#/wishlist','heart'],...(store.user?.isDemo ? [['inbox','Email NotAStore','#/account/email','spark']] : [])
+  ['account','Il mio account','#/account','user'],['rewards','Ricompense','#/account/ricompense','spark'],['dashboard','Dashboard','#/account/dashboard','chart'],['cards','Le mie carte','#/account/carte','card'],['moves','Movimenti','#/account/movimenti','ret'],['orders','I miei ordini','#/ordini','box'],['wishlist','Wishlist','#/wishlist','heart'],...(store.user?.isDemo ? [['inbox','Email NotAStore','#/account/email','spark']] : []),...(store.user?.role === 'admin' ? [['admin','Console admin','#/admin','lock']] : [])
 ].map(([id,label,href,icon]) => `<a href="${href}" class="${active === id ? 'on' : ''}">${Ico[icon](18)} ${label}</a>`).join('')}</aside>`;
 
 function cardArtwork(level, active) {
@@ -1018,25 +1018,31 @@ export function inbox() {
 export function adminConsole() {
   const levels = store.levels.map((level) => `<option value="${level.level}">${level.level} · ${esc(level.name)}</option>`).join('');
   const html = `<div class="admin-page wrap">
-    <div class="admin-head"><div><div class="eyebrow">AREA RISERVATA</div><h1>Console amministratore</h1><p>Gestisci livelli e accrediti virtuali. Ogni link di accredito è personale, monouso e scade dopo 24 ore.</p></div><span class="admin-lock">${Ico.lock(16)} Solo admin</span></div>
-    <div class="admin-summary"><div><span>Utenti</span><strong id="adminUserCount">—</strong></div><div><span>Consegna accrediti</span><strong>Email / posta demo</strong></div><div><span>Validità link</span><strong>24 ore</strong></div></div>
-    <div class="panel admin-table-shell"><div class="admin-toolbar"><div><h2>Utenti registrati</h2><p>La posta interna compare esclusivamente sull’account demo.</p></div><input id="adminSearch" type="search" placeholder="Cerca nome, username o email" aria-label="Cerca utenti"></div>
-      <div class="admin-table-wrap"><table class="table admin-table"><thead><tr><th>Utente</th><th>Livello</th><th>Saldo e spesa complessiva</th><th>Invia accredito</th><th>Cambia livello</th></tr></thead><tbody id="adminUsers"><tr><td colspan="5">Caricamento utenti…</td></tr></tbody></table></div>
+    <div class="admin-head"><div><div class="eyebrow">AREA RISERVATA</div><h1>Console amministratore</h1><p>Trova un account tramite email e gestisci saldo, spesa, livello e accrediti virtuali.</p></div><span class="admin-lock">${Ico.lock(16)} Solo admin</span></div>
+    <div class="admin-summary"><div><span>Ricerca</span><strong>Email esatta</strong></div><div><span>Accrediti</span><strong>Immediati o via email</strong></div><div><span>Link email</span><strong>Validità 24 ore</strong></div></div>
+    <div class="panel admin-table-shell"><form id="adminLookup" class="admin-toolbar"><div><h2>Cerca un utente</h2><p>Inserisci l’indirizzo usato durante la registrazione.</p></div><div class="admin-email-search"><input id="adminSearch" type="email" placeholder="utente@email.it" aria-label="Email utente" required><button class="btn btn-dark" type="submit">Cerca</button></div></form>
+      <div class="admin-table-wrap"><table class="table admin-table"><thead><tr><th>Utente</th><th>Saldo e spesa complessiva</th><th>Accredito immediato</th><th>Accredito via email</th><th>Livello</th></tr></thead><tbody id="adminUsers"><tr><td colspan="5" class="admin-empty">Inserisci un’email per visualizzare l’account.</td></tr></tbody></table></div>
     </div>
   </div>`;
   const mount = async () => {
     const host = document.getElementById('adminUsers');
     try {
       const data = await store.adminUsers();
-      document.getElementById('adminUserCount').textContent = data.users.length;
-      host.innerHTML = data.users.map((user) => `<tr data-admin-user data-search="${esc(`${user.name} ${user.username} ${user.email}`.toLowerCase())}">
-        <td><strong>${esc(user.name)}</strong><span>@${esc(user.username)} · ${esc(user.email)}</span>${user.isDemo ? '<em>DEMO · ADMIN</em>' : ''}</td>
-        <td><span class="badge badge-soft">L${user.level}</span></td><td><div class="admin-metrics"><label><span>Saldo virtuale €</span><input data-admin-wallet type="number" min="0" step="0.01" value="${user.wallet}"></label><label><span>Totale speso €</span><input data-admin-spent type="number" min="0" step="0.01" value="${user.totalSpent}"></label><button class="btn btn-soft" data-act="admin-metrics" data-id="${user.id}">Salva valori</button></div></td>
-        <td><div class="admin-action"><label><span>Importo €</span><input data-admin-amount type="number" min="1" max="10000000" step="0.01" placeholder="500"></label><button class="btn btn-primary" data-act="admin-credit" data-id="${user.id}">Invia email</button></div></td>
-        <td><div class="admin-action"><label><span>Nuovo livello</span><select data-admin-level>${levels.replace(`value="${user.level}"`, `value="${user.level}" selected`)}</select></label><button class="btn btn-dark" data-act="admin-level" data-id="${user.id}">Aggiorna</button></div></td>
-      </tr>`).join('');
+      const form = document.getElementById('adminLookup');
       const search = document.getElementById('adminSearch');
-      search.addEventListener('input', () => host.querySelectorAll('tr').forEach((row) => row.hidden = !row.dataset.search.includes(search.value.trim().toLowerCase())));
+      form.addEventListener('submit', (event) => {
+        event.preventDefault();
+        const email = search.value.trim().toLowerCase();
+        const user = data.users.find((entry) => String(entry.email).toLowerCase() === email);
+        if (!user) { host.innerHTML = '<tr><td colspan="5" class="admin-empty">Nessun account trovato con questa email.</td></tr>'; return; }
+        host.innerHTML = `<tr data-admin-user>
+          <td><strong>${esc(user.name)}</strong><span>@${esc(user.username)}</span><span>${esc(user.email)}</span>${user.isDemo ? '<em>DEMO · ADMIN</em>' : ''}<span class="badge badge-soft">Livello ${user.level}</span></td>
+          <td><div class="admin-metrics"><label><span>Saldo virtuale €</span><input data-admin-wallet type="number" min="0" step="0.01" value="${user.wallet}"></label><label><span>Totale speso €</span><input data-admin-spent type="number" min="0" step="0.01" value="${user.totalSpent}"></label><button class="btn btn-soft" data-act="admin-metrics" data-id="${user.id}">Salva valori</button></div></td>
+          <td><div class="admin-action admin-action-stack"><label><span>Importo €</span><input data-admin-direct-amount type="number" min="0.01" step="0.01" placeholder="500"></label><button class="btn btn-dark" data-act="admin-direct-credit" data-id="${user.id}">Accredita ora</button><small>Aggiunge subito il saldo.</small></div></td>
+          <td><div class="admin-action admin-action-stack"><label><span>Importo €</span><input data-admin-amount type="number" min="0.01" step="0.01" placeholder="500"></label><button class="btn btn-primary" data-act="admin-credit" data-id="${user.id}">Invia email</button><small>Link personale valido 24 ore.</small></div></td>
+          <td><div class="admin-action admin-action-stack"><label><span>Nuovo livello</span><select data-admin-level>${levels.replace(`value="${user.level}"`, `value="${user.level}" selected`)}</select></label><button class="btn btn-dark" data-act="admin-level" data-id="${user.id}">Aggiorna</button></div></td>
+        </tr>`;
+      });
     } catch (error) { host.innerHTML = `<tr><td colspan="5">${esc(error.message)}</td></tr>`; }
   };
   return { html, title: 'Console amministratore', mount };

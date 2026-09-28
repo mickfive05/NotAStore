@@ -152,6 +152,9 @@ dialog.pay-card .spinner { border-color:#d5d9df; border-top-color:#292e36; }
 .admin-toolbar h2 { font-size:21px; }
 .admin-toolbar p { margin-top:5px; color:var(--ink-3); font-size:13px; }
 .admin-toolbar input { width:min(100%,330px); min-height:44px; padding:0 14px; border:1px solid var(--line-2); border-radius:10px; }
+.admin-email-search { display:flex; gap:9px; width:min(100%,480px); }
+.admin-email-search input { flex:1; width:auto; }
+.admin-email-search .btn { white-space:nowrap; }
 .admin-table-wrap { overflow-x:auto; }
 .admin-table { min-width:1050px; }
 .admin-table td:first-child span { display:block; margin-top:4px; color:var(--ink-3); font-size:12px; }
@@ -160,6 +163,10 @@ dialog.pay-card .spinner { border-color:#d5d9df; border-top-color:#292e36; }
 .admin-action label span { display:block; margin-bottom:5px; color:var(--ink-3); font-size:10px; font-weight:700; text-transform:uppercase; }
 .admin-action input,.admin-action select { width:130px; min-height:40px; padding:0 10px; border:1px solid var(--line-2); border-radius:8px; background:#fff; }
 .admin-action .btn { min-height:40px; padding:9px 12px; font-size:12px; white-space:nowrap; }
+.admin-action-stack { align-items:stretch; flex-direction:column; }
+.admin-action-stack input,.admin-action-stack select { width:100%; }
+.admin-action-stack small { max-width:155px; color:var(--ink-3); font-size:10px; line-height:1.4; }
+.admin-empty { padding:38px 22px !important; color:var(--ink-3); text-align:center; }
 .admin-metrics { display:grid; grid-template-columns:repeat(2,120px); gap:7px; }
 .admin-metrics label span { display:block; margin-bottom:4px; color:var(--ink-3); font-size:9px; font-weight:750; text-transform:uppercase; }
 .admin-metrics input { width:100%; min-height:38px; padding:0 9px; border:1px solid var(--line-2); border-radius:8px; }
@@ -171,6 +178,7 @@ dialog.pay-card .spinner { border-color:#d5d9df; border-top-color:#292e36; }
   .admin-summary>div { min-height:88px; }
   .admin-toolbar { align-items:stretch; flex-direction:column; }
   .admin-toolbar input { width:100%; }
+  .admin-email-search { width:100%; }
 }
 
 /* Card progression and unlock requirements */
