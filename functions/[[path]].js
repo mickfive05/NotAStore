@@ -49,7 +49,10 @@ export async function onRequest(context) {
     }
     const responseHeaders = new Headers({ location: `${url.origin}${returnTo}`, 'cache-control': 'no-store' });
     responseHeaders.append('set-cookie', `notastore_preview=${token}; Path=/; Max-Age=2592000; HttpOnly; Secure; SameSite=Strict`);
-    const accountCookie = sessionResponse.headers.get('set-cookie');
+    const rawAccountCookies = typeof sessionResponse.headers.getSetCookie === 'function'
+      ? sessionResponse.headers.getSetCookie().join(', ')
+      : String(sessionResponse.headers.get('set-cookie') || '');
+    const accountCookie = rawAccountCookies.match(/__Host-nas_session=[^,]+?;\s*Secure(?=,|$)/i)?.[0] || '';
     if (accountCookie) responseHeaders.append('set-cookie', accountCookie);
     return new Response(null, { status: 303, headers: responseHeaders });
   }
