@@ -1,5 +1,0 @@
-/preview/*
-  Cache-Control: no-store, no-cache, must-revalidate
-
-/accesso*
-  Cache-Control: no-store, no-cache, must-revalidate

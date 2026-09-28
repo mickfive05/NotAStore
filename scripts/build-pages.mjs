@@ -22,6 +22,5 @@ for (const directory of ['css', 'data', 'images', 'js']) {
 for (const file of ['manifest.webmanifest', 'robots.txt', 'sitemap.xml']) {
   await cp(new URL(`../${file}`, import.meta.url), new URL(file, preview));
 }
-await cp(new URL('../pages-headers', import.meta.url), new URL('_headers', output));
 
 console.log('Build Cloudflare Pages pronto in dist/');

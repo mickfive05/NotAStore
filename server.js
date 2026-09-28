@@ -349,11 +349,6 @@ function limited(req) {
 async function api(req, res, url) {
   if (limited(req)) return json(res, 429, { error: 'Troppe richieste. Riprova tra poco.' });
   const user = currentUser(req);
-  const adminEmail = String(ENV.NOTASTORE_ADMIN_EMAIL || '').trim().toLowerCase();
-  if (user && adminEmail && String(user.email || '').trim().toLowerCase() === adminEmail && user.role !== 'admin') {
-    user.role = 'admin';
-    await persist();
-  }
   if (req.method === 'POST' && url.pathname === '/api/translate') {
     const data = await body(req);
     const texts = Array.isArray(data.texts) ? data.texts.map((value) => String(value || '').trim()).filter(Boolean).slice(0, 40) : [];
@@ -403,7 +398,6 @@ async function api(req, res, url) {
     const data = await body(req); const email = String(data.email || '').trim().toLowerCase();
     const found = db.users.find((u) => u.email === email);
     if (!found || !checkPassword(String(data.password || ''), found.passwordHash)) return json(res, 401, { error: 'Credenziali non valide.' });
-    if (adminEmail && found.email === adminEmail) found.role = 'admin';
     const sid = sessionFor(found); await persist();
     return json(res, 200, bootstrap(found), { 'Set-Cookie': sessionCookie(sid) });
   }
