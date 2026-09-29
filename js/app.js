@@ -428,7 +428,7 @@ document.addEventListener('click', async (e) => {
     }
     case 'social-code': {
       e.preventDefault(); const input = document.getElementById('socialRewardCode'); el.disabled = true;
-      try { const result = await store.redeemSocialCode(input?.value || ''); render(); toast('GiftCard riscattata', `${eur(result.amount)} inviati via email`, 'ok'); }
+      try { const result = await store.redeemSocialCode(input?.value || ''); render(); toast('GiftCard riscattata', `${eur(result.amount)} accreditati subito sul saldo`, 'ok'); }
       catch (error) { el.disabled = false; toast('GiftCard non riscattata', error.message, 'warn'); }
       break;
     }

@@ -264,6 +264,7 @@ function validVariants(product, selected = {}) {
 }
 
 const STREAK_REWARDS = { 3: 0.10, 7: 0.25, 14: 0.50, 30: 1 };
+const LAUNCH_GIFTCARD_AMOUNT = 10000;
 
 function rewardCenter(user) {
   const engagement = user.engagement || {};
@@ -279,7 +280,7 @@ function rewardCenter(user) {
     shareReward: amountFor(user, 0.25),
     shareAvailableAt,
     canShareReward: !shareAvailableAt || new Date(shareAvailableAt).getTime() <= Date.now(),
-    followReward: amountFor(user, 0.50),
+    followReward: LAUNCH_GIFTCARD_AMOUNT,
     socialCodeConfigured: Boolean(ENV.NOTASTORE_SOCIAL_CODE),
     inviteCode: user.inviteCode,
     inviteUrl: `${String(ENV.PUBLIC_BASE_URL || `http://localhost:${PORT}`).replace(/\/$/, '')}/#/invito/${encodeURIComponent(user.inviteCode)}`,
@@ -469,9 +470,9 @@ async function api(req, res, url) {
     if (!supplied || supplied !== configured) return json(res, 400, { error: 'Il codice GiftCard non è valido.' });
     const campaign = createHash('sha256').update(configured).digest('hex').slice(0, 16);
     if (user.engagement.socialCampaigns.includes(campaign)) return json(res, 409, { error: 'Hai già riscattato questa GiftCard.' });
-    const issued = await createReward(user, 'SOCIAL_FOLLOW', amountFor(user, 0.50), user.level, { campaign });
+    transaction(user, 'SOCIAL_FOLLOW', LAUNCH_GIFTCARD_AMOUNT, { campaign });
     user.engagement.socialCampaigns.push(campaign); await persist();
-    return json(res, 201, { delivery: issued.delivery, amount: issued.reward.amount, rewardCenter: rewardCenter(user) });
+    return json(res, 201, { delivery: 'instant', amount: LAUNCH_GIFTCARD_AMOUNT, wallet: user.wallet, rewardCenter: rewardCenter(user) });
   }
 
   if (req.method === 'POST' && url.pathname === '/api/rewards/referrals/check') {

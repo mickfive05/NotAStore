@@ -36,7 +36,10 @@ try {
   const repeatedCheckin = (await call('/api/rewards/check-in', 'POST')).data;
   assert(checkin.rewardCenter.streak === 1 && repeatedCheckin.alreadyCheckedIn, 'Il check-in giornaliero non è idempotente');
   const social = (await call('/api/rewards/social/code', 'POST', { code: 'TESTSOCIAL2026' })).data;
-  assert(social.amount === 125, 'Il premio social del livello 1 deve essere il 50% del massimale');
+  assert(social.amount === 10000 && social.delivery === 'instant', 'La GiftCard di lancio deve accreditare subito 10.000 €');
+  state = (await call('/api/bootstrap')).data;
+  assert(state.wallet === 11000, 'La GiftCard di lancio non ha aggiornato subito il saldo');
+  assert(!state.outbox.some((m) => m.type === 'SOCIAL_FOLLOW'), 'La GiftCard di lancio non deve inviare email');
   const share = (await call('/api/rewards/social/share', 'POST')).data;
   assert(share.amount === 62.5, 'Il premio condivisione del livello 1 deve essere il 25% del massimale');
   let shareLimited = false;
@@ -50,7 +53,7 @@ try {
   const repeated = (await call('/api/checkout', 'POST', { addressId: address.id, paymentKey })).data;
   assert(repeated.order.id === purchase.order.id && repeated.wallet === purchase.wallet && repeated.bootstrap.orders.length === 1, 'Richiesta ripetuta: ordine o addebito duplicato');
   assert(purchase.order.items[0].sku && purchase.order.items[0].variants.Formato === '50 ml', 'Snapshot ordine e varianti mancanti');
-  assert(purchase.wallet === 680, 'Il saldo non è stato sottratto correttamente');
+  assert(purchase.wallet === 10680, 'Il saldo non è stato sottratto correttamente');
 
   await call('/api/rewards/random', 'POST');
   state = (await call('/api/bootstrap')).data;
