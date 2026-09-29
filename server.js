@@ -375,6 +375,17 @@ async function api(req, res, url) {
     return json(res, 200, { translations });
   }
   if (req.method === 'GET' && url.pathname === '/api/bootstrap') return json(res, 200, bootstrap(user));
+  if (req.method === 'GET' && url.pathname === '/api/community') {
+    let cents = 0;
+    let orders = 0;
+    for (const member of db.users.filter((entry) => !entry.isDemo)) {
+      for (const order of member.orders || []) {
+        const amount = Number(order.total);
+        if (Number.isFinite(amount) && amount >= 0) { cents += Math.round(amount * 100); orders += 1; }
+      }
+    }
+    return json(res, 200, { totalSpent: cents / 100, goal: 1000000, orders }, { 'Cache-Control': 'no-store' });
+  }
   if (req.method === 'GET' && url.pathname === '/api/leaderboard') return json(res, 200, { entries: leaderboard(), currentUserId: user?.id || null });
 
   if (req.method === 'POST' && url.pathname === '/api/auth/register') {

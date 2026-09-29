@@ -125,6 +125,7 @@ export function header() {
     </div>
     <nav class="hdr-sub"><div class="wrap">
       <a class="hot" href="#/offerte">⚡ Offerte del giorno</a>
+      <a href="#/community">Spesa della community</a>
       ${cats.map(([s, n]) => `<a href="#/categoria/${s}">${n}</a>`).join('')}
     </div></nav>
   </header>
@@ -149,6 +150,7 @@ export function footer() {
         <a href="#/">Centro assistenza</a><a href="#/">Spedizioni e consegne</a><a href="#/">Resi e rimborsi</a>
         <a href="#/ordini">Traccia il tuo ordine</a><a href="mailto:info@notastore.shop">Contattaci</a></div>
       <div><h4>Chi siamo</h4>
+        <a href="#/community">Spesa della community</a>
         <a href="#/chi-siamo">Il progetto NotAStore</a><a href="#/chi-siamo">La nostra storia</a><a href="#/come-funziona">Come funziona</a>
         <a href="#/privacy">Privacy Policy</a><a href="#/termini">Termini e condizioni</a></div>
     </div>

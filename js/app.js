@@ -41,6 +41,7 @@ function resolve() {
   if (a === 'registrazione') return V.auth('register');
   if (a === 'invito') return V.auth('register', b || '');
   if (a === 'leaderboard') return V.leaderboard();
+  if (a === 'community') return V.community();
   if (a === 'chi-siamo') return V.about();
   if (a === 'come-funziona') return V.howItWorks();
   if (a === 'privacy') return V.privacyPolicy();

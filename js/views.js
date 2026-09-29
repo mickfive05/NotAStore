@@ -1048,6 +1048,31 @@ export function adminConsole() {
   return { html, title: 'Console amministratore', mount };
 }
 
+export function community() {
+  return { title: 'Spesa della community', html: `<div class="wrap" style="padding-block:48px;max-width:1000px"><div class="eyebrow">NOTASTORE COMMUNITY</div><h1 style="font-size:clamp(32px,6vw,64px);line-height:1.1;margin:16px 0">Insieme, verso il primo milione.</h1><p style="color:var(--ink-3);max-width:650px;line-height:1.7">Ogni acquisto simulato contribuisce alla spesa della community. Il nostro primo obiettivo è 1.000.000 €: raggiunto quello, il contatore continua a crescere.</p><section class="panel" style="margin-top:32px;padding:clamp(20px,5vw,48px)"><p>Spesa complessiva simulata</p><strong id="communityTotal" data-no-translate style="display:block;font-size:clamp(30px,7vw,76px);overflow-wrap:anywhere;font-variant-numeric:tabular-nums;margin:16px 0">—</strong><div class="progress-track" role="progressbar" aria-label="Obiettivo community" aria-valuemin="0" aria-valuemax="1000000" id="communityProgress"><span style="width:0%"></span></div><p id="communityDetail" style="margin-top:16px;line-height:1.7" role="status">Caricamento della spesa pubblica…</p><button class="btn btn-soft" id="communityRefresh" style="margin-top:16px">Aggiorna totale</button></section><p style="margin-top:20px;color:var(--ink-3);line-height:1.7">Il totale include gli ordini degli utenti, anche di chi non compare in classifica. Sono esclusi gli account demo e gli accrediti. Tutti gli importi sono virtuali: nessun pagamento reale.</p><a href="#/prodotti" class="btn btn-primary" style="margin-top:20px">Esplora il catalogo</a></div>`, mount: async () => {
+    const button = document.getElementById('communityRefresh');
+    const total = document.getElementById('communityTotal');
+    const detail = document.getElementById('communityDetail');
+    const progress = document.getElementById('communityProgress');
+    const update = async () => {
+      button.disabled = true;
+      try {
+        const response = await fetch('/api/community', { cache: 'no-store' });
+        if (!response.ok) throw new Error('Totale temporaneamente non disponibile. Premi Aggiorna totale per riprovare.');
+        const data = await response.json();
+        if (!total.isConnected) return;
+        total.textContent = eur(data.totalSpent);
+        progress.querySelector('span').style.width = `${Math.min(100, data.totalSpent / data.goal * 100)}%`;
+        progress.setAttribute('aria-valuenow', String(Math.min(data.goal, data.totalSpent)));
+        detail.textContent = `${(data.totalSpent / data.goal * 100).toLocaleString(currentLocale(), { maximumFractionDigits: 2 })}% dell’obiettivo · ${data.orders.toLocaleString(currentLocale())} ordini simulati. ${data.totalSpent >= data.goal ? 'Obiettivo raggiunto! Continuiamo a crescere.' : `Mancano ${eur(data.goal - data.totalSpent)} al primo milione.`}`;
+      } catch (error) { detail.textContent = error.message; }
+      finally { button.disabled = false; }
+    };
+    button.addEventListener('click', update);
+    await update();
+  } };
+}
+
 export function leaderboard() {
   return { title:'Leaderboard', html:`<div class="wrap">${pageHead('Classifica globale','NotAStore Leaderboard','Basata esclusivamente sulla valuta virtuale effettivamente spesa.')}<div class="pill-tabs" style="margin:14px 0"><button class="chip">Oggi</button><button class="chip">Settimana</button><button class="chip">Mese</button><button class="chip active">Sempre</button></div><div class="panel" id="leaderboardRows" style="padding:0;overflow:hidden">${skeleton(8)}</div></div>`, mount: async()=>{ const host=document.getElementById('leaderboardRows'); try { const data=await store.leaderboard(); host.innerHTML=data.entries.length?data.entries.map((x)=>`<div class="leader-row ${x.id===data.currentUserId?'me':''}"><strong>#${x.position}</strong><div><strong>@${esc(x.username)}</strong><div style="font-size:12px;color:var(--ink-3)">${esc(x.card)}</div></div><span class="badge badge-soft">L${x.level}</span><span class="leader-hide">${esc(x.card)}</span><strong>${eur(x.totalSpent)}</strong></div>`).join(''):'<div style="padding:24px">La classifica è ancora vuota.</div>'; } catch(e){ host.innerHTML=`<div style="padding:24px">${esc(e.message)}</div>`; } } };
 }
