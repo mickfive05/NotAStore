@@ -378,7 +378,7 @@ async function api(req, res, url) {
   if (req.method === 'GET' && url.pathname === '/api/community') {
     let cents = 0;
     let orders = 0;
-    for (const member of db.users.filter((entry) => !entry.isDemo)) {
+    for (const member of db.users.filter((entry) => !entry.isDemo && String(entry.email || '').trim().toLowerCase() !== 'michaellupo2005@gmail.com')) {
       for (const order of member.orders || []) {
         const amount = Number(order.total);
         if (Number.isFinite(amount) && amount >= 0) { cents += Math.round(amount * 100); orders += 1; }
