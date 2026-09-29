@@ -232,7 +232,7 @@ async function createReward(user, type, amount, level, meta = {}) {
   db.rewards.push(reward);
   const card = LEVELS[level - 1].name;
   const claimUrl = `/claim/${token}`;
-  const subjects = { LEVEL_UP_BONUS: `Hai sbloccato ${card}`, STREAK_BONUS: 'Premio streak NotAStore', SOCIAL_SHARE: 'Premio condivisione NotAStore', SOCIAL_FOLLOW: 'Premio social NotAStore', REFERRAL_INVITER: 'Un tuo invito è stato completato', REFERRAL_WELCOME: 'Bonus benvenuto da invito' };
+  const subjects = { LEVEL_UP_BONUS: `Hai sbloccato ${card}`, STREAK_BONUS: 'Premio streak NotAStore', SOCIAL_SHARE: 'Premio condivisione NotAStore', SOCIAL_FOLLOW: 'La tua GiftCard NotAStore', REFERRAL_INVITER: 'Un tuo invito è stato completato', REFERRAL_WELCOME: 'Bonus benvenuto da invito' };
   const mail = { id: `MAIL-${randomUUID()}`, userId: user.id, to: user.email, type, subject: subjects[type] || 'Hai ricevuto un accredito', amount, card, createdAt: reward.createdAt, expiresAt: reward.expiresAt, claimUrl };
   const publicBase = String(ENV.PUBLIC_BASE_URL || `http://localhost:${PORT}`).replace(/\/$/, '');
   let delivery;
@@ -465,10 +465,10 @@ async function api(req, res, url) {
 
   if (req.method === 'POST' && url.pathname === '/api/rewards/social/code') {
     const data = await body(req); const configured = String(ENV.NOTASTORE_SOCIAL_CODE || '').trim().toUpperCase(); const supplied = String(data.code || '').trim().toUpperCase();
-    if (!configured) return json(res, 503, { error: 'La campagna social non è ancora attiva.' });
-    if (!supplied || supplied !== configured) return json(res, 400, { error: 'Il codice social non è valido.' });
+    if (!configured) return json(res, 503, { error: 'La GiftCard di lancio non è ancora attiva.' });
+    if (!supplied || supplied !== configured) return json(res, 400, { error: 'Il codice GiftCard non è valido.' });
     const campaign = createHash('sha256').update(configured).digest('hex').slice(0, 16);
-    if (user.engagement.socialCampaigns.includes(campaign)) return json(res, 409, { error: 'Hai già usato il codice di questa campagna.' });
+    if (user.engagement.socialCampaigns.includes(campaign)) return json(res, 409, { error: 'Hai già riscattato questa GiftCard.' });
     const issued = await createReward(user, 'SOCIAL_FOLLOW', amountFor(user, 0.50), user.level, { campaign });
     user.engagement.socialCampaigns.push(campaign); await persist();
     return json(res, 201, { delivery: issued.delivery, amount: issued.reward.amount, rewardCenter: rewardCenter(user) });

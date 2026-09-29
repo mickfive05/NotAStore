@@ -180,6 +180,7 @@ function openMenu() {
       <a href="#/account" data-act="close-menu">${Ico.user(20)} Il mio account</a>
       <a href="#/ordini" data-act="close-menu">${Ico.box(20)} I miei ordini</a>
       <a href="#/wishlist" data-act="close-menu">${Ico.heart(20)} I miei preferiti</a>
+      <a class="community-nav-link community-nav-mobile" href="#/community" data-act="close-menu">${Ico.chart(20)} <span>Spesa della community</span><small>LIVE</small></a>
       <a href="#/prodotti" data-act="close-menu">Tutti i prodotti</a>
       <a href="#/chi-siamo" data-act="close-menu">${Ico.spark(20)} Il progetto NotAStore</a>
       <a href="#/come-funziona" data-act="close-menu">${Ico.shield(20)} Come funziona</a>
@@ -427,8 +428,8 @@ document.addEventListener('click', async (e) => {
     }
     case 'social-code': {
       e.preventDefault(); const input = document.getElementById('socialRewardCode'); el.disabled = true;
-      try { const result = await store.redeemSocialCode(input?.value || ''); render(); toast('Codice accettato', `${eur(result.amount)} inviati via email`, 'ok'); }
-      catch (error) { el.disabled = false; toast('Codice non accettato', error.message, 'warn'); }
+      try { const result = await store.redeemSocialCode(input?.value || ''); render(); toast('GiftCard riscattata', `${eur(result.amount)} inviati via email`, 'ok'); }
+      catch (error) { el.disabled = false; toast('GiftCard non riscattata', error.message, 'warn'); }
       break;
     }
     case 'copy-invite': {
