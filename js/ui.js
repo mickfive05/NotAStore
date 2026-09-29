@@ -149,7 +149,10 @@ export function footer() {
       <div><h4>Assistenza</h4>
         <a href="#/">Centro assistenza</a><a href="#/">Spedizioni e consegne</a><a href="#/">Resi e rimborsi</a>
         <a href="#/ordini">Traccia il tuo ordine</a><a href="mailto:info@notastore.shop">Contattaci</a>
-        <a href="https://ko-fi.com/michaellupoo" target="_blank" rel="noopener noreferrer">Supporta NotAStore su Ko-fi ↗</a></div>
+        <a class="kofi-support-link" href="https://ko-fi.com/michaellupoo" target="_blank" rel="noopener noreferrer" aria-label="Supporta NotAStore su Ko-fi, apre in una nuova scheda">
+          <span class="kofi-support-icon" aria-hidden="true">${Ico.heart(19)}</span>
+          <span><strong>Supporta NotAStore</strong><small>Offrimi un caffè su Ko-fi ↗</small></span>
+        </a></div>
       <div><h4>Chi siamo</h4>
         <a class="community-nav-link" href="#/community">Spesa della community</a>
         <a href="#/chi-siamo">Il progetto NotAStore</a><a href="#/chi-siamo">La nostra storia</a><a href="#/come-funziona">Come funziona</a>
