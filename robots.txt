@@ -7,4 +7,8 @@ Disallow: /checkout
 Disallow: /conferma
 Disallow: /claim/
 
-Sitemap: https://notastore.shop/sitemap.xml
+Disallow: /amministrazione
+Disallow: /preview/
+Disallow: /accesso
+
+Sitemap: https://www.notastore.shop/sitemap.xml

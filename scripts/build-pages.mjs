@@ -1,10 +1,17 @@
-import { cp, mkdir, rm } from 'node:fs/promises';
+import { cp, mkdir, rm, readFile, writeFile } from 'node:fs/promises';
 
 const output = new URL('../dist/', import.meta.url);
 await rm(output, { recursive: true, force: true });
 await mkdir(output, { recursive: true });
 
-await cp(new URL('../coming-soon.html', import.meta.url), new URL('index.html', output));
+const publicHtml = (await readFile(new URL('../index.html', import.meta.url), 'utf8')).replace('<head>', '<head>\n<base href="/">').replaceAll('https://notastore.shop', 'https://www.notastore.shop');
+await writeFile(new URL('index.html', output), publicHtml);
+for (const directory of ['css', 'images', 'js']) {
+  await cp(new URL(`../${directory}/`, import.meta.url), new URL(`${directory}/`, output), { recursive: true });
+}
+for (const file of ['manifest.webmanifest', 'robots.txt', 'sitemap.xml']) {
+  await cp(new URL(`../${file}`, import.meta.url), new URL(file, output));
+}
 await mkdir(new URL('css/', output), { recursive: true });
 await mkdir(new URL('images/', output), { recursive: true });
 await cp(new URL('../css/coming-soon.css', import.meta.url), new URL('css/coming-soon.css', output));
@@ -20,7 +27,7 @@ await cp(new URL('../admin-console.html', import.meta.url), new URL('amministraz
 const preview = new URL('preview/', output);
 await mkdir(preview, { recursive: true });
 await cp(new URL('../index.html', import.meta.url), new URL('index.html', preview));
-for (const directory of ['css', 'data', 'images', 'js']) {
+for (const directory of ['css', 'images', 'js']) {
   await cp(new URL(`../${directory}/`, import.meta.url), new URL(`${directory}/`, preview), { recursive: true });
 }
 for (const file of ['manifest.webmanifest', 'robots.txt', 'sitemap.xml']) {

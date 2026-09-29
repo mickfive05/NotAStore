@@ -4,12 +4,13 @@ import { dirname, join } from 'node:path';
 import { CATALOG } from '../js/data.js';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
-const base = 'https://notastore.shop';
+const base = 'https://www.notastore.shop';
 const today = new Date().toISOString().slice(0, 10);
 const staticPages = [
   ['/', '1.0', 'daily'],
   ['/prodotti', '0.9', 'daily'],
   ['/offerte', '0.8', 'daily'],
+  ['/community', '0.8', 'daily'],
   ['/come-funziona', '0.8', 'monthly'],
   ['/chi-siamo', '0.7', 'monthly'],
   ['/privacy', '0.4', 'yearly'],

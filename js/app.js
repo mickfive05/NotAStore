@@ -73,7 +73,7 @@ function render() {
 
 function updatePageMetadata(page) {
   const publicPath = currentRoute.path === '/' ? '/' : currentRoute.path.replace(/\/$/, '');
-  const canonicalUrl = `https://notastore.shop${publicPath}`;
+  const canonicalUrl = `https://www.notastore.shop${publicPath}`;
   const title = document.title;
   const description = page.description || 'NotAStore è uno shopping simulator digitale: esplora prodotti e completa ordini usando esclusivamente valuta virtuale.';
   const set = (selector, attribute, value) => {

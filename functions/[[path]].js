@@ -25,6 +25,9 @@ async function hasPrivateAccess(context) {
 
 export async function onRequest(context) {
   const url = new URL(context.request.url);
+  if (url.pathname === '/data' || url.pathname.startsWith('/data/') || url.pathname.startsWith('/preview/data/')) {
+    return new Response('Not found', { status: 404 });
+  }
 
   if (url.pathname === '/api/preview-login' && context.request.method === 'POST') {
     const configuredCode = String(context.env.PREVIEW_ACCESS_CODE || '');
