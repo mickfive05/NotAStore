@@ -2,6 +2,13 @@
 <html lang="it">
 <head>
 <meta charset="utf-8">
+<script>
+  document.documentElement.classList.add('js');
+  window.setTimeout(function () {
+    if (document.querySelector('.seo-prerender')) document.documentElement.classList.remove('js');
+  }, 4000);
+</script>
+<style>html.js .seo-prerender{display:none!important}</style>
 <!-- Google Consent Mode v2: analytics storage remains denied until CookieYes records consent. -->
 <script>
   window.dataLayer = window.dataLayer || [];
