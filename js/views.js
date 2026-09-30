@@ -4,7 +4,7 @@ import {
   CARDS, ADDRESSES, SHIPPING, CARD_LABEL, variantPrice, variantListPrice, defaultVariants, variantTitle, variantImage,
 } from './data.js?v=20260922c';
 import { store } from './store.js?v=20260922c';
-import { card, rail, crumbs, pageHead, imgTag, Ico, esc, skeleton } from './ui.js?v=20260922c';
+import { card, rail, crumbs, pageHead, imgTag, Ico, esc, skeleton } from './ui.js?v=20260930seo';
 import { currentLocale } from './i18n.js?v=20260925translate';
 
 /* ---------------- stato locale delle pagine ---------------- */
@@ -34,7 +34,7 @@ export function home() {
   const popular = [...PRODUCTS].sort((a,b) => b.sold-a.sold).slice(0,4);
   const audio = byId('au-08');
   const sections = (title, label, items, href = '/prodotti') => `<section class="edit-section wrap"><div class="edit-heading"><div><p class="edit-label">${label}</p><h2>${title}</h2></div><a class="edit-link" href="#${href}">Esplora ${Ico.chevron(16)}</a></div><div class="edit-products">${items.map(p=>card(p)).join('')}</div></section>`;
-  return { title: 'NotAStore — Scopri il prossimo desiderio', html: `
+  return { title: 'Shopping Simulator online — acquisti virtuali senza spendere', description: 'Prova NotAStore, il simulatore di shopping online gratuito: esplora prodotti, configura il carrello e completa acquisti virtuali senza denaro reale.', html: `
     <div class="editorial-home">
       <section class="launch-hero wrap">
         <div class="launch-copy">
@@ -50,6 +50,10 @@ export function home() {
           ${imgTag(hero).replace('loading="lazy"', 'loading="eager" fetchpriority="high"')}
           <span class="launch-caption">iPhone 18 Pro Max <span>Borgogna / 256 GB ${Ico.chevron(16)}</span></span>
         </a>
+      </section>
+      <section class="home-seo-intro wrap">
+        <p class="edit-label">NOTASTORE · SHOPPING SIMULATOR</p>
+        <div><h2>Prova lo shopping.<br>Senza comprare.</h2><p>NotAStore è un simulatore di shopping online: esplori prodotti, scegli le configurazioni, riempi il carrello e completi ordini usando soltanto denaro virtuale. Nessun pagamento reale, nessuna consegna, più spazio per capire se vuoi davvero acquistare.</p><a class="edit-link" href="/simulatore-di-shopping">Scopri come funziona ${Ico.chevron(18)}</a></div>
       </section>
       <nav class="department-line wrap" aria-label="Reparti">
         <span>Trova la tua prossima scoperta</span>
@@ -127,7 +131,7 @@ export function about() {
       </div>
     </section>
   </div>`;
-  return { html, title: 'Chi siamo' };
+  return { html, title: 'Chi siamo — il progetto contro lo shopping impulsivo', description: 'Scopri come nasce NotAStore, lo shopping simulator italiano pensato per creare una pausa tra desiderio e acquisto impulsivo.' };
 }
 
 /* ================= COME FUNZIONA ================= */
@@ -144,7 +148,7 @@ export function howItWorks() {
       <div class="wrap guide-hero-grid">
         <div class="guide-hero-copy">
           <p class="guide-kicker"><span></span> COME FUNZIONA NOTASTORE</p>
-          <h1>Il desiderio resta.<br><em>La spesa no.</em></h1>
+          <h1>Il simulatore di shopping.<br><em>La spesa no.</em></h1>
           <p>NotAStore ricrea l’esperienza di un grande e-commerce per aiutarti a rallentare l’acquisto d’impulso. Esplori, scegli e ordini davvero — ma il denaro, le carte e la consegna sono soltanto una simulazione.</p>
           <div class="guide-actions"><a class="btn btn-primary btn-lg" href="#/prodotti">Inizia a esplorare ${Ico.chevron(18)}</a><a href="#/chi-siamo">Scopri la storia del progetto</a></div>
         </div>
@@ -227,7 +231,7 @@ export function howItWorks() {
 
     <section class="guide-cta"><div class="wrap"><p>Hai capito il meccanismo.</p><h2>Ora prova a desiderare<br>senza dover comprare.</h2><div><a class="btn btn-primary btn-lg" href="#/prodotti">Esplora il catalogo ${Ico.chevron(18)}</a><a href="#/registrazione">Crea un account</a></div><small>NotAStore non è un servizio medico o terapeutico. Nessun prodotto viene venduto.</small></div></section>
   </div>`;
-  return { html, title: 'Come funziona' };
+  return { html, title: 'Simulatore di shopping: come funziona NotAStore', description: 'Cos’è un simulatore di shopping? Scopri come NotAStore permette di esplorare, configurare e ordinare prodotti con saldo virtuale, senza acquisti reali.', canonicalPath: '/simulatore-di-shopping' };
 }
 
 /* ================= INFORMAZIONI LEGALI ================= */

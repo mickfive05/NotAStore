@@ -155,7 +155,7 @@ export function footer() {
         </a></div>
       <div><h4>Chi siamo</h4>
         <a class="community-nav-link" href="#/community">Spesa della community</a>
-        <a href="#/chi-siamo">Il progetto NotAStore</a><a href="#/chi-siamo">La nostra storia</a><a href="#/come-funziona">Come funziona</a>
+        <a href="#/chi-siamo">Il progetto NotAStore</a><a href="#/chi-siamo">La nostra storia</a><a href="/simulatore-di-shopping">Simulatore di shopping</a>
         <a href="#/privacy">Privacy Policy</a><a href="#/termini">Termini e condizioni</a></div>
     </div>
     <div class="ftr-disclaimer">

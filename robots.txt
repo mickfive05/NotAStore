@@ -10,5 +10,12 @@ Disallow: /claim/
 Disallow: /amministrazione
 Disallow: /preview/
 Disallow: /accesso
+Disallow: /login
+Disallow: /registrazione
+Disallow: /invito/
+Disallow: /wishlist
+Disallow: /carrello
+Disallow: /ordini
+Disallow: /accredito
 
 Sitemap: https://www.notastore.shop/sitemap.xml

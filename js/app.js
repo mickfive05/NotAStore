@@ -1,7 +1,7 @@
-import { header as headerHTML, footer as footerHTML, toast, card, esc, Ico, imgSrc, activeCardVisual } from './ui.js?v=20260926searchwide';
+import { header as headerHTML, footer as footerHTML, toast, card, esc, Ico, imgSrc, activeCardVisual } from './ui.js?v=20260930seo';
 import { store } from './store.js?v=20260922c';
 import { CATALOG as PRODUCTS, CARDS, byId, defaultVariants, variantPrice, variantListPrice, variantTitle, variantImage, variantSpecs, eur } from './data.js?v=20260922c';
-import * as V from './views.js?v=20260925cardnames';
+import * as V from './views.js?v=20260930seo';
 import { currentLocale, localizeDocument, setLanguage, startLocalizationObserver, translateText } from './i18n.js?v=20260925translate';
 
 const app = document.getElementById('app');
@@ -43,7 +43,7 @@ function resolve() {
   if (a === 'leaderboard') return V.leaderboard();
   if (a === 'community') return V.community();
   if (a === 'chi-siamo') return V.about();
-  if (a === 'come-funziona') return V.howItWorks();
+  if (a === 'come-funziona' || a === 'simulatore-di-shopping') return V.howItWorks();
   if (a === 'privacy') return V.privacyPolicy();
   if (a === 'termini') return V.terms();
   if (a === 'accredito') return V.creditResult(params);
@@ -64,6 +64,7 @@ function render() {
   appHeader.innerHTML = headerHTML();
   app.innerHTML = page.html;
   appFooter.innerHTML = footerHTML();
+  exposeCrawlableLinks(document);
   document.title = page.title ? `${translateText(page.title)} · NotAStore` : 'NotAStore — Shopping Simulator';
   updatePageMetadata(page);
   if (page.mount) page.mount();
@@ -72,7 +73,8 @@ function render() {
 }
 
 function updatePageMetadata(page) {
-  const publicPath = currentRoute.path === '/' ? '/' : currentRoute.path.replace(/\/$/, '');
+  const routePath = page.canonicalPath || currentRoute.path;
+  const publicPath = routePath === '/' ? '/' : routePath.replace(/\/$/, '');
   const canonicalUrl = `https://www.notastore.shop${publicPath}`;
   const title = document.title;
   const description = page.description || 'NotAStore è uno shopping simulator digitale: esplora prodotti e completa ordini usando esclusivamente valuta virtuale.';
@@ -89,12 +91,38 @@ function updatePageMetadata(page) {
   set('meta[name="twitter:description"]', 'content', description);
 }
 
+function exposeCrawlableLinks(root) {
+  root.querySelectorAll('a[href^="#/"]').forEach((link) => {
+    link.href = link.getAttribute('href').slice(1);
+    link.dataset.spaLink = 'true';
+  });
+}
+
 function go(hash) {
-  if (location.hash === hash) { render(); }
-  else location.hash = hash;
+  const path = String(hash || '/').replace(/^#/, '') || '/';
+  history.pushState({}, '', path);
+  currentRoute = parseHash();
+  window.scrollTo({ top: 0, behavior: 'instant' });
+  render();
 }
 
 window.addEventListener('hashchange', () => {
+  currentRoute = parseHash();
+  window.scrollTo({ top: 0, behavior: 'instant' });
+  render();
+});
+
+window.addEventListener('popstate', () => {
+  currentRoute = parseHash();
+  window.scrollTo({ top: 0, behavior: 'instant' });
+  render();
+});
+
+document.addEventListener('click', (event) => {
+  const link = event.target.closest('a[data-spa-link="true"]');
+  if (!link || event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+  event.preventDefault();
+  history.pushState({}, '', new URL(link.href, location.origin).pathname + new URL(link.href, location.origin).search);
   currentRoute = parseHash();
   window.scrollTo({ top: 0, behavior: 'instant' });
   render();
@@ -566,6 +594,6 @@ function refreshPicks(el) {
 /* ---------------- Avvio ---------------- */
 await store.init();
 currentRoute = parseHash();
-if (!location.hash && ['/', '/preview', '/preview/'].includes(location.pathname)) location.hash = '#/';
+if (!location.hash && ['/preview', '/preview/'].includes(location.pathname)) location.hash = '#/';
 render();
 
