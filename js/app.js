@@ -592,6 +592,16 @@ function refreshPicks(el) {
 }
 
 /* ---------------- Avvio ---------------- */
+const cleanUrl = new URL(location.href);
+let removedTrackingParameter = false;
+for (const key of [...cleanUrl.searchParams.keys()]) {
+  if (key === '_gl' || key === '_up' || key === '_ga' || key.startsWith('_ga_')) {
+    cleanUrl.searchParams.delete(key);
+    removedTrackingParameter = true;
+  }
+}
+if (removedTrackingParameter) history.replaceState({}, '', `${cleanUrl.pathname}${cleanUrl.search}${cleanUrl.hash}`);
+
 await store.init();
 currentRoute = parseHash();
 if (!location.hash && ['/preview', '/preview/'].includes(location.pathname)) location.hash = '#/';
